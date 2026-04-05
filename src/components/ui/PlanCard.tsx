@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Info } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 
 interface PlanCardProps {

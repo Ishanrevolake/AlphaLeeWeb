@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useEffect } from 'react';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Phone, Download } from 'lucide-react';
 import { useFunnelStore } from '@/store/funnelStore';
@@ -9,7 +8,7 @@ import { Button } from '@/components/ui/Button';
 import { ProgressBar } from '@/components/ui/ProgressBar';
 
 export default function SuccessPage() {
-  const { name, clearFunnel } = useFunnelStore();
+  const { name } = useFunnelStore();
 
   const [mounted, setMounted] = React.useState(false);
   useEffect(() => {
@@ -44,7 +43,7 @@ export default function SuccessPage() {
         </div>
         
         <h1 className="text-4xl md:text-5xl font-black mb-6 font-outfit text-gray-900">
-          You're officially part of Alpha Lee's program 💪
+          You&apos;re officially part of Alpha Lee&apos;s program 💪
         </h1>
         
         <p className="text-xl text-gray-600 mb-12 font-medium">

@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
-import { CheckCircle2, Star, Dumbbell, Activity, ShieldCheck } from "lucide-react";
+import { Dumbbell, Activity, ShieldCheck } from "lucide-react";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -51,7 +50,7 @@ export default function LandingPage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-black mb-4 text-gray-900 font-outfit">Why Choose Alpha Lee?</h2>
-            <p className="text-xl text-gray-600 font-medium">Everything you need to succeed, nothing you don't.</p>
+            <p className="text-xl text-gray-600 font-medium">Everything you need to succeed, nothing you don&apos;t.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">

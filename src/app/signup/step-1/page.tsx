@@ -99,8 +99,8 @@ export default function Step1Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Let's get to know you</h1>
-        <p className="text-gray-500 mb-8 font-medium">We'll use this to customize your transformation plan.</p>
+        <h1 className="text-3xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Let&apos;s get to know you</h1>
+        <p className="text-gray-500 mb-8 font-medium">We&apos;ll use this to customize your transformation plan.</p>
 
         <form id="step1-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-24">
           <div className="space-y-4">

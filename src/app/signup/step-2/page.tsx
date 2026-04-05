@@ -72,7 +72,7 @@ export default function Step2Page() {
       >
         <h1 className="text-3xl font-black mb-4 font-outfit text-gray-900">Secure Your Spot</h1>
         <p className="text-gray-600 font-medium mb-8">
-          You've selected the <span className="font-bold text-primary capitalize">{selectedPackage}</span> plan. Choose your preferred payment method below.
+          You&apos;ve selected the <span className="font-bold text-primary capitalize">{selectedPackage}</span> plan. Choose your preferred payment method below.
         </p>
 
         <div className="space-y-4">

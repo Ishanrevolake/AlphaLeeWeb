@@ -4,8 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFunnelStore } from '@/store/funnelStore';
-import { Button } from '@/components/ui/Button';
-import { ProgressBar } from '@/components/ui/ProgressBar';
 import { PlanCard } from '@/components/ui/PlanCard';
 import { Check, X } from 'lucide-react';
 
@@ -92,7 +90,7 @@ export default function PackagesPage() {
               {...pkg}
               isSelected={selectedPackage === pkg.id}
               onClick={() => setPackage(pkg.id)}
-              onInfoClick={(e) => setInfoPackage(pkg)}
+              onInfoClick={() => setInfoPackage(pkg)}
               onStartNow={() => {
                 setPackage(pkg.id);
                 router.push('/signup/step-1');
@@ -137,7 +135,7 @@ export default function PackagesPage() {
               </div>
 
               <div className="space-y-4">
-                <h3 className="font-bold text-gray-900 text-[17px] mb-4 tracking-tight">What's included:</h3>
+                <h3 className="font-bold text-gray-900 text-[17px] mb-4 tracking-tight">What&apos;s included:</h3>
                 {infoPackage.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start">
                     <div className="mt-0.5 bg-[#cca751]/10 p-1 rounded-full mr-3 shrink-0">

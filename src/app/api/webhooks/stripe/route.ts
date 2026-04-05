@@ -19,9 +19,10 @@ export async function POST(req: Request) {
     try {
       if (!webhookSecret) throw new Error('Missing Stripe webhook secret');
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
-    } catch (err: any) {
-      console.error('Webhook signature verification failed:', err.message);
-      return NextResponse.json({ error: `Webhook Error: ${err.message}` }, { status: 400 });
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      console.error('Webhook signature verification failed:', errorMessage);
+      return NextResponse.json({ error: `Webhook Error: ${errorMessage}` }, { status: 400 });
     }
 
     if (event.type === 'checkout.session.completed') {
@@ -45,8 +46,9 @@ export async function POST(req: Request) {
     }
 
     return NextResponse.json({ received: true });
-  } catch (err: any) {
-    console.error('Webhook Error:', err.message);
+  } catch (err: unknown) {
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    console.error('Webhook Error:', errorMessage);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
