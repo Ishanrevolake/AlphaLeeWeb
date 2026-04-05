@@ -9,8 +9,18 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: "var(--background)",
-        foreground: "var(--foreground)",
+        primary: {
+          light: "#ff7b7b",
+          DEFAULT: "#ff4d4d", // Light red brand color
+          dark: "#e60000",
+        },
+        background: {
+          DEFAULT: "#ffffff",
+          dark: "#f8fafc",
+        }
+      },
+      borderRadius: {
+        DEFAULT: "0.5rem",
       },
     },
   },
