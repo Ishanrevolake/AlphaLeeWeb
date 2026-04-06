@@ -31,16 +31,16 @@ const RadioCard = ({ label, value, selectedValue, onChange, description }: {
     <div 
       onClick={() => onChange(value)}
       className={`cursor-pointer border-2 rounded-xl p-4 transition-all duration-200 flex items-center ${
-        isSelected ? 'border-[#cca751] bg-[#cca751]/5 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'
+        isSelected ? 'border-[#FF0000] bg-red-50 shadow-sm' : 'border-gray-200 hover:border-gray-300 bg-white'
       }`}
     >
       <div className={`h-5 w-5 rounded-full border-2 flex items-center justify-center mr-4 shrink-0 transition-colors ${
-        isSelected ? 'border-[#cca751]' : 'border-gray-300 bg-white'
+        isSelected ? 'border-[#FF0000]' : 'border-gray-300 bg-white'
       }`}>
-        {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-[#cca751]" />}
+        {isSelected && <div className="h-2.5 w-2.5 rounded-full bg-[#FF0000]" />}
       </div>
       <div>
-        <div className={`font-semibold ${isSelected ? 'text-[#cca751]' : 'text-gray-900'}`}>{label}</div>
+        <div className={`font-semibold ${isSelected ? 'text-[#FF0000]' : 'text-gray-900'}`}>{label}</div>
         {description && <div className="text-gray-500 text-sm mt-0.5 leading-tight">{description}</div>}
       </div>
     </div>
@@ -99,7 +99,7 @@ export default function Step1Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Let&apos;s get to know you</h1>
+        <h1 className="text-4xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Let&apos;s get to know you</h1>
         <p className="text-gray-500 mb-8 font-medium">We&apos;ll use this to customize your transformation plan.</p>
 
         <form id="step1-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-24">
@@ -154,7 +154,7 @@ export default function Step1Page() {
                   key={day}
                   onClick={() => setValue('workoutDays', day, {shouldValidate: true})}
                   className={`cursor-pointer border-2 rounded-xl py-3 text-center transition-all duration-200 font-bold ${
-                    workDays === day ? 'border-[#cca751] bg-[#cca751] text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300 bg-white'
+                    workDays === day ? 'border-[#FF0000] bg-[#FF0000] text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300 bg-white'
                   }`}
                 >
                   {day}

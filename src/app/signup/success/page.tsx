@@ -42,7 +42,7 @@ export default function SuccessPage() {
           </motion.div>
         </div>
         
-        <h1 className="text-4xl md:text-5xl font-black mb-6 font-outfit text-gray-900">
+        <h1 className="text-4xl md:text-5xl font-black mb-6 font-outfit text-gray-900 tracking-tight">
           You&apos;re officially part of Alpha Lee&apos;s program 💪
         </h1>
         

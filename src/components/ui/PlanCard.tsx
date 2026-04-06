@@ -22,13 +22,13 @@ export const PlanCard: React.FC<PlanCardProps> = ({
 }) => {
   return (
     <motion.div
-      whileHover={{ y: -4 }}
+      whileHover={{ y: -8, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative cursor-pointer rounded-[2rem] p-7 transition-all duration-300 bg-white ${
-        isSelected ? 'border-2 border-[#cca751] shadow-2xl shadow-[#cca751]/10 outline-none ring-1 ring-[#cca751]/30 ring-offset-2' 
-        : isPopular ? 'border-2 border-[#cca751] shadow-[0_4px_24px_rgba(0,0,0,0.06)] hover:shadow-xl'
-        : 'border-2 border-transparent shadow-[0_4px_24px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_30px_rgba(0,0,0,0.08)]'
+      className={`relative cursor-pointer rounded-[2.5rem] p-8 transition-all duration-500 bg-white ${
+        isSelected ? 'border-2 border-[#FF0000] shadow-[0_20px_50px_rgba(255,0,0,0.15)] outline-none ring-1 ring-[#FF0000]/30 ring-offset-4' 
+        : isPopular ? 'border-2 border-[#FF0000]/30 shadow-[0_10px_40px_rgba(0,0,0,0.04)] hover:shadow-2xl'
+        : 'border-2 border-transparent shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-2xl'
       }`}
     >
       {isPopular && (
@@ -39,9 +39,9 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         </div>
       )}
       
-      <div className="text-[3.5rem] leading-none font-black text-[#cca751] mb-2">{letter}</div>
-      <h3 className="text-[1.35rem] font-bold text-gray-900 mb-1">{title}</h3>
-      <div className="text-gray-400 font-medium mb-6 text-[15px]">{subtitle}</div>
+      <div className="text-[4rem] leading-none font-black text-[#FF0000] mb-2 font-outfit tracking-tighter">{letter}</div>
+      <h3 className="text-[1.5rem] font-black text-gray-900 mb-1 font-outfit tracking-tight">{title}</h3>
+      <div className="text-gray-400 font-bold mb-8 text-[15px] uppercase tracking-wider">{subtitle}</div>
       
       <div className="h-16 flex flex-col justify-end mb-4">
         {oldPriceText && (
@@ -49,7 +49,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
             {oldPriceText}
           </div>
         )}
-        <div className="text-3xl font-black text-gray-900 tracking-tight leading-none mt-1">
+        <div className="text-4xl font-black text-gray-900 tracking-tighter leading-none mt-1 font-outfit">
           {price}
         </div>
       </div>

@@ -1,0 +1,11 @@
+﻿
+F:\DELLO_SITES\AlphaWebApp\src\app\recipe-book\page.tsx
+  79:17   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  79:156  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+F:\DELLO_SITES\AlphaWebApp\src\app\testimonials\page.tsx
+  96:17  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  96:31  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+Γ£û 4 problems (4 errors, 0 warnings)
+

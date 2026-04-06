@@ -70,7 +70,7 @@ export default function Step2Page() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-black mb-4 font-outfit text-gray-900">Secure Your Spot</h1>
+        <h1 className="text-4xl font-black mb-4 font-outfit text-gray-900 tracking-tight">Secure Your Spot</h1>
         <p className="text-gray-600 font-medium mb-8">
           You&apos;ve selected the <span className="font-bold text-primary capitalize">{selectedPackage}</span> plan. Choose your preferred payment method below.
         </p>

@@ -17,15 +17,15 @@ export default function LandingPage() {
     <div className="flex flex-col flex-1 bg-white">
       {/* Hero Section */}
       <section className="relative px-6 py-20 lg:py-32 overflow-hidden bg-gray-900 text-white flex items-center justify-center min-h-[80vh]">
-        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-primary-dark via-gray-900 to-black pointer-events-none" />
+        <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-600 via-gray-900 to-black pointer-events-none" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.h1 
-            className="text-5xl lg:text-7xl font-black mb-6 tracking-tight font-outfit"
+            className="text-6xl lg:text-8xl font-black mb-6 tracking-tighter font-outfit"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            Train with <span className="text-primary">Alpha Lee</span>
+            Train with <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-[#FF0000] to-red-700">Alpha Lee</span>
           </motion.h1>
           <motion.p 
             className="text-xl lg:text-2xl text-gray-300 mb-10 max-w-2xl mx-auto font-medium"
@@ -48,9 +48,9 @@ export default function LandingPage() {
       {/* Benefits Section */}
       <section className="py-24 px-6 bg-gray-50">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-black mb-4 text-gray-900 font-outfit">Why Choose Alpha Lee?</h2>
-            <p className="text-xl text-gray-600 font-medium">Everything you need to succeed, nothing you don&apos;t.</p>
+          <div className="text-center mb-20">
+            <h2 className="text-4xl lg:text-5xl font-black mb-4 text-gray-900 font-outfit tracking-tight">Why Choose Alpha Lee?</h2>
+            <p className="text-xl text-gray-500 font-medium">Everything you need to succeed, nothing you don&apos;t.</p>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8">
@@ -65,13 +65,13 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow"
+                className="bg-white/70 backdrop-blur-md p-10 rounded-[2.5rem] shadow-[0_8px_30px_rgba(0,0,0,0.02)] border border-white/50 hover:border-[#cca751]/30 hover:shadow-[0_20px_50px_rgba(204,167,81,0.05)] transition-all duration-500 group"
               >
-                <div className="h-14 w-14 bg-primary/10 rounded-2xl flex items-center justify-center mb-6 text-primary">
-                  <benefit.icon size={28} strokeWidth={2.5} />
+                <div className="h-16 w-16 bg-gradient-to-br from-red-500/20 to-red-600/10 rounded-2xl flex items-center justify-center mb-8 text-[#FF0000] group-hover:scale-110 transition-transform duration-500">
+                  <benefit.icon size={32} strokeWidth={2} />
                 </div>
-                <h3 className="text-xl font-bold mb-3">{benefit.title}</h3>
-                <p className="text-gray-600 leading-relaxed font-medium">{benefit.desc}</p>
+                <h3 className="text-2xl font-black mb-4 font-outfit tracking-tight">{benefit.title}</h3>
+                <p className="text-gray-500 leading-relaxed font-medium text-[16px]">{benefit.desc}</p>
               </motion.div>
             ))}
           </div>

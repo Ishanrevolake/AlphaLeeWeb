@@ -8,11 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['var(--font-sans)', 'sans-serif'],
+        outfit: ['var(--font-outfit)', 'sans-serif'],
+      },
       colors: {
         primary: {
-          light: "#ff7b7b",
-          DEFAULT: "#ff4d4d", // Light red brand color
-          dark: "#e60000",
+          light: "#ff4d4d",
+          DEFAULT: "#FF0000", // Pure red
+          dark: "#cc0000",
         },
         background: {
           DEFAULT: "#ffffff",

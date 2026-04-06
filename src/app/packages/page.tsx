@@ -125,21 +125,21 @@ export default function PackagesPage() {
                 <X size={20} />
               </button>
               
-              <div className="text-[3.5rem] leading-none font-black text-[#cca751] mb-2">{infoPackage.letter}</div>
+              <div className="text-[3.5rem] leading-none font-black text-[#FF0000] mb-2">{infoPackage.letter}</div>
               <h2 className="text-3xl font-black text-gray-900 mb-2 tracking-tight">{infoPackage.title}</h2>
-              <div className="text-[#cca751] font-bold text-[17px] mb-6">{infoPackage.subtitle} • {infoPackage.price}</div>
+              <div className="text-[#FF0000] font-bold text-[17px] mb-6">{infoPackage.subtitle} • {infoPackage.price}</div>
               
-              <div className="bg-[#F9F8F4] rounded-2xl p-5 mb-8 border border-[#cca751]/10">
+              <div className="bg-[#F9F8F4] rounded-2xl p-5 mb-8 border border-red-500/10">
                 <p className="text-gray-700 font-medium mb-3 leading-relaxed text-[15px]">{infoPackage.detailSubtitle}</p>
-                <p className="text-[13px] font-bold text-[#cca751] uppercase tracking-wider">{infoPackage.example}</p>
+                <p className="text-[13px] font-bold text-[#FF0000] uppercase tracking-wider">{infoPackage.example}</p>
               </div>
 
               <div className="space-y-4">
                 <h3 className="font-bold text-gray-900 text-[17px] mb-4 tracking-tight">What&apos;s included:</h3>
                 {infoPackage.features.map((feature, idx) => (
                   <div key={idx} className="flex items-start">
-                    <div className="mt-0.5 bg-[#cca751]/10 p-1 rounded-full mr-3 shrink-0">
-                      <Check className="h-3 w-3 text-[#cca751]" strokeWidth={4} />
+                    <div className="mt-0.5 bg-red-500/10 p-1 rounded-full mr-3 shrink-0">
+                      <Check className="h-3 w-3 text-[#FF0000]" strokeWidth={4} />
                     </div>
                     <span className="text-gray-700 font-medium leading-relaxed text-[15px]">{feature}</span>
                   </div>
