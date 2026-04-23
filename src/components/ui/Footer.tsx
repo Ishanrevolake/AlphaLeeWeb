@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { Phone, Mail } from "lucide-react";
-import { Button } from "@/components/ui/Button";
 
 export function Footer() {
   return (

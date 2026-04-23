@@ -59,7 +59,7 @@ export default function ChallengesPage() {
                 </svg>
               </div>
               <span className="text-xl tracking-tight">Thank you for subscribing!</span>
-              <p className="font-medium text-green-600 mt-2 text-base">We'll be in touch soon.</p>
+              <p className="font-medium text-green-600 mt-2 text-base">We&apos;ll be in touch soon.</p>
             </motion.div>
           ) : (
             <>
