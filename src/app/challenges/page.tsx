@@ -68,6 +68,7 @@ export default function ChallengesPage() {
                 <div className="space-y-1.5 focus-within:text-[#FF0000] text-gray-500 transition-colors">
                   <label htmlFor="name" className="font-bold text-[13px] ml-1 uppercase tracking-wider">Your name <span className="text-[#FF0000]">*</span></label>
                   <Input 
+                    label=""
                     id="name"
                     type="text" 
                     value={formData.name}
@@ -80,6 +81,7 @@ export default function ChallengesPage() {
                   <div className="space-y-1.5 focus-within:text-[#FF0000] text-gray-500 transition-colors">
                     <label htmlFor="dob" className="font-bold text-[13px] ml-1 uppercase tracking-wider">Date of Birth <span className="text-[#FF0000]">*</span></label>
                     <Input 
+                      label=""
                       id="dob"
                       type="date" 
                       value={formData.dob}
@@ -91,6 +93,7 @@ export default function ChallengesPage() {
                   <div className="space-y-1.5 focus-within:text-[#FF0000] text-gray-500 transition-colors">
                     <label htmlFor="city" className="font-bold text-[13px] ml-1 uppercase tracking-wider">City <span className="text-[#FF0000]">*</span></label>
                     <Input 
+                      label=""
                       id="city"
                       type="text" 
                       value={formData.city}
@@ -103,6 +106,7 @@ export default function ChallengesPage() {
                 <div className="space-y-1.5 focus-within:text-[#FF0000] text-gray-500 transition-colors">
                   <label htmlFor="email" className="font-bold text-[13px] ml-1 uppercase tracking-wider">Your email <span className="text-[#FF0000]">*</span></label>
                   <Input 
+                    label=""
                     id="email"
                     type="email" 
                     value={formData.email}
