@@ -15,3 +15,17 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+@keyframes marquee-scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(calc(-50% - 1rem)); } 
+}
+
+.scrolling-marquee {
+  animation: marquee-scroll 40s linear infinite;
+  will-change: transform;
+}
+
+.scrolling-wrapper:hover .scrolling-marquee {
+  animation-play-state: paused;
+}

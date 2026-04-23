@@ -1,8 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
 
 export default function ProcessDetailsPage() {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen py-24 px-6 bg-[#F9F8F4]">
       <motion.div 
@@ -78,6 +82,13 @@ export default function ProcessDetailsPage() {
               </div>
             </div>
           </section>
+        </div>
+        
+        {/* CTA Button */}
+        <div className="flex justify-center mt-20 mb-10">
+          <Button onClick={() => router.push("/packages")} size="lg" className="rounded-full px-10 py-4 text-lg font-black tracking-wide bg-[#FF0000] hover:bg-red-700 text-white shadow-2xl shadow-red-500/30 transition-all flex justify-center items-center h-14">
+            Find a Programme
+          </Button>
         </div>
       </motion.div>
     </div>

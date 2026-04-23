@@ -4,6 +4,15 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/Button";
 import { Dumbbell, Utensils, MessageCircle, FileVideo, ShieldCheck } from "lucide-react";
+import Image from "next/image";
+import T1 from "@/Testimonials/T1.png";
+import T2 from "@/Testimonials/T2.png";
+import T3 from "@/Testimonials/T3.png";
+import T4 from "@/Testimonials/T4.png";
+import T5 from "@/Testimonials/T5.png";
+import T6 from "@/Testimonials/T6.png";
+
+import { InterestForm } from "@/components/InterestForm";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -12,6 +21,8 @@ export default function LandingPage() {
     animate: { opacity: 1, y: 0 },
     transition: { duration: 0.6 }
   };
+
+  const testimonials = [T1, T2, T3, T4, T5, T6];
 
   return (
     <div className="flex flex-col flex-1 bg-white">
@@ -38,10 +49,41 @@ export default function LandingPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button onClick={() => router.push("/packages")} size="lg" className="text-lg py-6 px-10 shadow-2xl shadow-primary/40 rounded-full font-black">
+            <Button onClick={() => router.push("/packages")} size="lg" className="text-lg py-4 px-8 shadow-2xl shadow-primary/40 rounded-full font-black">
               View Rates & Details
             </Button>
           </motion.div>
+        </div>
+      </section>
+
+      {/* Testimonials Marquee Section */}
+      <section className="py-16 bg-gray-100 border-y border-gray-200 overflow-hidden relative">
+        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-gray-100 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none" />
+        
+        <div className="mb-10 text-center px-6">
+          <h2 className="text-3xl md:text-4xl font-black text-gray-900 font-outfit tracking-tight">
+            Real Results from <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-700">Real People</span>
+          </h2>
+        </div>
+        
+        <div className="flex overflow-x-hidden scrolling-wrapper">
+          <div className="py-8 scrolling-marquee flex gap-8 w-max pl-4">
+            {[...testimonials, ...testimonials].map((img, idx) => (
+              <div 
+                key={idx} 
+                className="relative w-[280px] md:w-[350px] aspect-[4/5] flex-none overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)]"
+              >
+                <Image 
+                  src={img} 
+                  alt={`Client Transformation ${idx + 1}`} 
+                  fill 
+                  className="object-cover hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 768px) 280px, 350px"
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -81,6 +123,9 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Interest Form Section */}
+      <InterestForm />
 
       {/* Sticky Mobile CTA Background Spacer */}
       <div className="h-24 md:h-0"></div>

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
@@ -11,9 +12,7 @@ export function Header() {
     { href: "/process-details", label: "Process Details" },
     { href: "/recipe-book", label: "Alpha Chef Recipe Book" },
     { href: "/challenges", label: "ALF Challenges" },
-    { href: "/blog", label: "Fitness Blog" },
-    { href: "/testimonials", label: "Testimonials" },
-    { href: "/about", label: "About Us" }
+    { href: "/blog", label: "Fitness Blog" }
   ];
 
   return (
@@ -35,6 +34,23 @@ export function Header() {
               </Link>
             );
           })}
+          
+          <div className="relative group">
+            <button className={`flex items-center gap-1 transition-all duration-200 whitespace-nowrap px-3 py-1.5 rounded-lg ${(pathname === "/testimonials" || pathname === "/about") ? 'text-[#FF0000] bg-red-500/10 font-bold' : 'text-gray-500 hover:text-[#FF0000] hover:bg-gray-100'}`}>
+              More <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-200" />
+            </button>
+            <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-200 z-50">
+              <div className="w-40 bg-white border border-gray-100 shadow-xl rounded-xl py-2 flex flex-col">
+                <Link href="/testimonials" className={`px-4 py-2 text-[13px] hover:bg-gray-50 transition-colors ${pathname === '/testimonials' ? 'text-[#FF0000] font-bold' : 'text-gray-600 hover:text-[#FF0000]'}`}>
+                  Testimonials
+                </Link>
+                <Link href="/about" className={`px-4 py-2 text-[13px] hover:bg-gray-50 transition-colors ${pathname === '/about' ? 'text-[#FF0000] font-bold' : 'text-gray-600 hover:text-[#FF0000]'}`}>
+                  About Us
+                </Link>
+              </div>
+            </div>
+          </div>
+
           <Link href="/packages" className="bg-[#FF0000] text-white px-5 py-2 rounded-full hover:bg-[#cc0000] transition-colors duration-200 shadow-sm whitespace-nowrap ml-4 font-bold tracking-wide">
             Download Mobile App
           </Link>

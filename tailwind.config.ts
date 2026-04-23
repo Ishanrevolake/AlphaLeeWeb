@@ -8,6 +8,15 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      animation: {
+        scroll: 'scroll 40s linear infinite',
+      },
+      keyframes: {
+        scroll: {
+          '0%': { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(calc(-50% - 1rem))' },
+        }
+      },
       fontFamily: {
         sans: ['var(--font-sans)', 'sans-serif'],
         outfit: ['var(--font-outfit)', 'sans-serif'],
@@ -15,7 +24,7 @@ const config: Config = {
       colors: {
         primary: {
           light: "#ff4d4d",
-          DEFAULT: "#FF0000", // Pure red
+          DEFAULT: "#FF0000",
           dark: "#cc0000",
         },
         background: {

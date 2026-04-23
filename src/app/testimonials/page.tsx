@@ -4,6 +4,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import Image from "next/image";
+import T1 from "@/Testimonials/T1.png";
+import T2 from "@/Testimonials/T2.png";
+import T3 from "@/Testimonials/T3.png";
+import T4 from "@/Testimonials/T4.png";
+import T5 from "@/Testimonials/T5.png";
+import T6 from "@/Testimonials/T6.png";
 
 const REVIEWS = [
   {
@@ -51,6 +58,8 @@ const REVIEWS = [
 ];
 
 export default function TestimonialsPage() {
+  const galleryImages = [T1, T2, T3, T4, T5, T6];
+
   return (
     <div className="flex flex-col flex-1 bg-gray-50 min-h-screen pt-24 pb-32">
       <div className="max-w-7xl mx-auto px-6 w-full">
@@ -107,6 +116,42 @@ export default function TestimonialsPage() {
               </div>
             </motion.div>
           ))}
+        </div>
+
+        {/* Transformation Gallery */}
+        <div className="mt-32 mb-10 text-center">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-[#FF0000] font-bold tracking-[0.2em] uppercase text-sm mb-4 font-sans">Visual Proof</h2>
+            <h3 className="text-3xl md:text-5xl font-black text-gray-900 tracking-tight font-outfit mb-12">
+              Transformations
+            </h3>
+          </motion.div>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-8">
+            {galleryImages.map((img, i) => (
+              <motion.div 
+                key={i}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+                className="relative aspect-[4/5] rounded-3xl overflow-hidden shadow-[0_10px_30px_rgba(0,0,0,0.15)] group bg-gray-200 border-4 border-white"
+              >
+                <Image 
+                  src={img} 
+                  alt={`Transformation ${i + 1}`} 
+                  fill 
+                  className="object-cover group-hover:scale-105 transition-transform duration-700" 
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
 
         {/* CTA section after reviews */}
