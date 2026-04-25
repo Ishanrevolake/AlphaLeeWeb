@@ -11,7 +11,6 @@ export function Header() {
     { href: "/packages", label: "Find a Programme" },
     { href: "/process-details", label: "Process Details" },
     { href: "/recipe-book", label: "Alpha Chef Recipe Book" },
-    { href: "/challenges", label: "ALF Challenges" },
     { href: "/blog", label: "Fitness Blog" }
   ];
 
@@ -50,10 +49,6 @@ export function Header() {
               </div>
             </div>
           </div>
-
-          <Link href="/packages" className="bg-[#FF0000] text-white px-5 py-2 rounded-full hover:bg-[#cc0000] transition-colors duration-200 shadow-sm whitespace-nowrap ml-4 font-bold tracking-wide">
-            Download Mobile App
-          </Link>
         </nav>
       </div>
     </header>
