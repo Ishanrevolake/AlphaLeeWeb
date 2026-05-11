@@ -2,10 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, Menu, X } from "lucide-react";
 
 export function Header() {
   const pathname = usePathname();
+  const [isOpen, setIsOpen] = useState(false);
 
   const links = [
     { href: "/packages", label: "Find a Programme" },
@@ -16,8 +18,8 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#F9F8F4]/80 border-b border-gray-200/50 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-      <div className="max-w-7xl mx-auto px-6 h-[76px] flex items-center justify-between">
-        <Link href="/" className="font-black text-2xl tracking-tighter hover:text-gray-600 transition-colors">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-[76px] flex items-center justify-between">
+        <Link href="/" className="font-black text-xl sm:text-2xl tracking-tighter hover:text-gray-600 transition-colors" onClick={() => setIsOpen(false)}>
           ALPHA LEE
         </Link>
         <nav className="hidden lg:flex items-center space-x-1 font-semibold text-[12px] xl:text-[14px] xl:space-x-2 tracking-wide">
@@ -50,7 +52,37 @@ export function Header() {
             </div>
           </div>
         </nav>
+
+        <button
+          type="button"
+          className="lg:hidden h-10 w-10 rounded-full border border-gray-200 bg-white/80 flex items-center justify-center text-gray-800"
+          onClick={() => setIsOpen((open) => !open)}
+          aria-label={isOpen ? "Close menu" : "Open menu"}
+          aria-expanded={isOpen}
+        >
+          {isOpen ? <X size={20} /> : <Menu size={20} />}
+        </button>
       </div>
+
+      {isOpen && (
+        <nav className="lg:hidden border-t border-gray-200/70 bg-[#F9F8F4]/95 px-4 py-4 shadow-lg max-h-[calc(100svh-4rem)] overflow-y-auto">
+          <div className="flex flex-col gap-2 font-bold text-sm">
+            {[...links, { href: "/testimonials", label: "Testimonials" }, { href: "/about", label: "About Us" }].map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`rounded-2xl px-4 py-3 transition-colors ${isActive ? "bg-red-500/10 text-[#FF0000]" : "bg-white/70 text-gray-700 hover:text-[#FF0000]"}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+        </nav>
+      )}
     </header>
   );
 }

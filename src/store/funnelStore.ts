@@ -10,11 +10,13 @@ interface FunnelData {
   workoutLocation: string;
   workoutDays: string;
   selectedPackage: string | null;
+  replyGuaranteeAddon: boolean;
 }
 
 interface FunnelState extends FunnelData {
-  setDetails: (details: Partial<Omit<FunnelData, 'selectedPackage'>>) => void;
+  setDetails: (details: Partial<Omit<FunnelData, 'selectedPackage' | 'replyGuaranteeAddon'>>) => void;
   setPackage: (pkg: string) => void;
+  setReplyGuaranteeAddon: (enabled: boolean) => void;
   clearFunnel: () => void;
 }
 
@@ -27,6 +29,7 @@ const initialState: FunnelData = {
   workoutLocation: '',
   workoutDays: '',
   selectedPackage: null,
+  replyGuaranteeAddon: false,
 };
 
 export const useFunnelStore = create<FunnelState>()(
@@ -35,6 +38,7 @@ export const useFunnelStore = create<FunnelState>()(
       ...initialState,
       setDetails: (details) => set((state) => ({ ...state, ...details })),
       setPackage: (pkg) => set({ selectedPackage: pkg }),
+      setReplyGuaranteeAddon: (enabled) => set({ replyGuaranteeAddon: enabled }),
       clearFunnel: () => set(initialState),
     }),
     {

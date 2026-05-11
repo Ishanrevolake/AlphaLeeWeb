@@ -6,9 +6,9 @@ import { Phone, Mail } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-black text-white pt-16 pb-8 border-t-[6px] border-[#FF0000]">
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-12 mb-12">
         {/* Column 1: Brand & Socials */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
           <Link href="/" className="font-black text-3xl tracking-tighter hover:text-gray-300 transition-colors mb-2">
             ALPHA LEE
           </Link>
@@ -27,7 +27,7 @@ export function Footer() {
         </div>
 
         {/* Column 2: Navigation Links */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
           <h4 className="font-bold mb-6 tracking-wide uppercase text-sm text-gray-500">Navigation</h4>
           <ul className="space-y-4 font-medium text-[15px] text-gray-300">
             <li><Link href="/packages" className="hover:text-[#FF0000] transition-colors">Find a Programme</Link></li>
@@ -38,7 +38,7 @@ export function Footer() {
         </div>
 
         {/* Column 3: More Links */}
-        <div className="flex flex-col items-center md:items-start text-center md:text-left">
+        <div className="flex flex-col items-center lg:items-start text-center lg:text-left">
           <h4 className="font-bold mb-6 tracking-wide uppercase text-sm text-gray-500">More</h4>
           <ul className="space-y-4 font-medium text-[15px] text-gray-300 mb-8">
             <li><Link href="/blog" className="hover:text-[#FF0000] transition-colors">Fitness Blog</Link></li>
@@ -48,8 +48,8 @@ export function Footer() {
         </div>
 
         {/* Column 4: Newsletter & Direct Contact */}
-        <div className="flex flex-col items-center md:items-end text-center md:text-right">
-          <div className="w-full flex justify-center md:justify-end mb-8 gap-8">
+        <div className="flex flex-col items-center lg:items-end text-center lg:text-right">
+          <div className="w-full flex flex-col sm:flex-row justify-center lg:justify-end mb-8 gap-6 sm:gap-8">
              <div className="flex flex-col items-center md:items-center">
                <Phone size={24} className="text-gray-400 mb-2" />
                <span className="text-[15px] font-bold">076 6277 835</span>
@@ -76,11 +76,11 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p className="text-sm text-gray-500 font-medium tracking-wide">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p className="text-sm text-gray-500 font-medium tracking-wide text-center md:text-left">
           © {new Date().getFullYear()} Alpha Lee Fitness. All Rights Reserved.
         </p>
-        <div className="flex space-x-6 text-sm text-gray-500 font-medium">
+        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
           <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
           <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
         </div>

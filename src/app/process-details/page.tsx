@@ -8,20 +8,20 @@ export default function ProcessDetailsPage() {
   const router = useRouter();
 
   return (
-    <div className="min-h-screen py-24 px-6 bg-[#F9F8F4]">
+    <div className="min-h-screen py-16 sm:py-24 px-4 sm:px-6 bg-[#F9F8F4]">
       <motion.div 
         className="max-w-4xl mx-auto"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-5xl lg:text-7xl font-black mb-12 text-gray-900 font-outfit tracking-tighter">
+        <h1 className="text-[clamp(2.4rem,11vw,4.5rem)] lg:text-7xl font-black mb-10 sm:mb-12 text-gray-900 font-outfit tracking-tight">
           ONLINE COACHING <span className="text-[#FF0000]">SERVICE</span>
         </h1>
 
         <div className="space-y-16">
           <section>
-            <h2 className="text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">CONNECT & DATA GATHERING</h2>
-            <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100">
+            <h2 className="text-2xl sm:text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">CONNECT & DATA GATHERING</h2>
+            <div className="bg-white rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100">
               <p className="text-gray-600 mb-5 text-[17px] font-medium leading-relaxed">First, you select a package or bundle and submit your interest in joining with our online coaching subscription service.</p>
               <p className="text-gray-600 mb-6 text-[17px] font-medium leading-relaxed">We contact you through whatsapp and start the set up process and also get your payment processed. Apart from the basic data gathering, we require you to submit:</p>
               <ul className="list-none space-y-4 text-gray-700 font-medium">
@@ -45,16 +45,16 @@ export default function ProcessDetailsPage() {
           </section>
 
           <section>
-            <h2 className="text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">STARTER WEEK</h2>
-            <div className="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 space-y-6">
-              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">Once built and handed over, you will review the plan and list down your questions. Once addressed, you can start.</p>
-              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">During the first week, all clients are expected to submit a recording of each exercise performed using a manageable weight. Only once the technique is cleared are you allowed to use more challenging weights. Based on reviewing those videos, your coach will further customize the plan.</p>
-              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">Meal plan wise, we start you off with a minimum of 10 meal options. (If you are a vegan living in Sri Lanka, you will get fewer options in general because of local constraints.)</p>
+            <h2 className="text-2xl sm:text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">STARTER WEEK</h2>
+            <div className="bg-white rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 space-y-6">
+              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">Once your plan is delivered, you’ll review it and raise any questions, requests or clarifications before starting.</p>
+              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">During the first week, you’ll submit videos of each exercise using manageable weights. Your coach will assess your technique before progressing to heavier weights and will refine your program based on his evaluation.</p>
+              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">You’ll also begin with a minimum of 8-10 meal options, adjusted based on your dietary preferences and local availability. (Vegan options in Sri Lanka may be more limited due to ingredient constraints).</p>
             </div>
           </section>
 
           <section>
-            <h2 className="text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">ONGOING SUPPORT</h2>
+            <h2 className="text-2xl sm:text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">ONGOING SUPPORT</h2>
             <div className="grid md:grid-cols-2 gap-6">
               {[
                 { title: "Progress Updates", desc: "We expect all clients to submit a progress update every week describing how well or poorly they followed the plan. A form will be provided." },
@@ -62,7 +62,7 @@ export default function ProcessDetailsPage() {
                 { title: "Answering Questions", desc: "Questions must be submitted via whatsapp text messages or voice notes. They are addressed within 48-72 hours (unless you purchased a 24-hour reply guarantee)." },
                 { title: "Voice Calls", desc: "All voice calls must be scheduled beforehand. We offer them to all clients, on all packages." }
               ].map((item, idx) => (
-                <div key={idx} className="bg-white rounded-[2rem] p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300">
+                <div key={idx} className="bg-white rounded-3xl md:rounded-[2rem] p-6 sm:p-8 shadow-sm border border-gray-100 hover:shadow-xl transition-shadow duration-300">
                   <h3 className="text-xl font-bold mb-4 text-gray-900 tracking-tight">{item.title}</h3>
                   <p className="text-gray-600 font-medium leading-relaxed text-[15px]">{item.desc}</p>
                 </div>
@@ -70,8 +70,8 @@ export default function ProcessDetailsPage() {
             </div>
           </section>
           <section>
-            <h2 className="text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">IMPORTANT NOTES</h2>
-            <div className="bg-[#FF0000]/10 rounded-[2.5rem] p-8 md:p-12 border border-[#FF0000]/20 space-y-6">
+            <h2 className="text-2xl sm:text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">IMPORTANT NOTES</h2>
+            <div className="bg-[#FF0000]/10 rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-8 md:p-12 border border-[#FF0000]/20 space-y-6">
               <div className="flex items-start">
                 <div className="mt-1.5 h-3 w-3 rounded-full bg-[#FF0000] mr-4 shrink-0 shadow-[0_0_10px_rgba(255,0,0,0.5)]"></div>
                 <p className="text-gray-900 text-[17px] font-bold leading-relaxed">Our service never offers instant replies or call-on-demand services. Discussion dates and times can be scheduled on request.</p>

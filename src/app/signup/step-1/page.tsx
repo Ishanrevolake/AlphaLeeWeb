@@ -10,6 +10,7 @@ import { useFunnelStore } from '@/store/funnelStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { ProgressBar } from '@/components/ui/ProgressBar';
+import { getPackageById } from '@/lib/packages';
 
 const formSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -50,6 +51,7 @@ const RadioCard = ({ label, value, selectedValue, onChange, description }: {
 export default function Step1Page() {
   const router = useRouter();
   const store = useFunnelStore();
+  const selectedPackage = getPackageById(store.selectedPackage);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -88,19 +90,39 @@ export default function Step1Page() {
   };
 
   return (
-    <div className="min-h-screen py-12 px-6 flex flex-col items-center">
-      <div className="w-full max-w-xl mx-auto mb-10 mt-8">
+    <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 flex flex-col items-center">
+      <div className="w-full max-w-xl mx-auto mb-8 sm:mb-10 mt-4 sm:mt-8">
         <ProgressBar currentStep={1} totalSteps={3} />
       </div>
       
       <motion.div 
-        className="bg-white p-8 md:p-10 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 w-full max-w-xl"
+        className="bg-white p-5 sm:p-8 md:p-10 rounded-3xl shadow-[0_4px_24px_rgba(0,0,0,0.04)] border border-gray-100 w-full max-w-xl"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-4xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Let&apos;s get to know you</h1>
+        <h1 className="text-3xl sm:text-4xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Let&apos;s get to know you</h1>
         <p className="text-gray-500 mb-8 font-medium">We&apos;ll use this to customize your transformation plan.</p>
+
+        <div className="mb-8 rounded-2xl border border-red-500/10 bg-[#FF0000]/5 p-4 sm:p-5">
+          <div className="text-[12px] font-black uppercase tracking-[0.18em] text-[#FF0000] mb-2">Currently selected package</div>
+          {selectedPackage ? (
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2">
+              <div>
+                <div className="text-xl font-black text-gray-900 tracking-tight">{selectedPackage.title}</div>
+                <div className="text-sm font-semibold text-gray-500">{selectedPackage.subtitle}</div>
+              </div>
+              <div className="text-2xl font-black text-gray-900">{selectedPackage.price}</div>
+            </div>
+          ) : (
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <p className="text-sm font-semibold text-gray-600">No package selected yet.</p>
+              <Button type="button" variant="secondary" onClick={() => router.push('/packages')} className="h-11">
+                Choose Package
+              </Button>
+            </div>
+          )}
+        </div>
 
         <form id="step1-form" onSubmit={handleSubmit(onSubmit)} className="space-y-8 pb-24">
           <div className="space-y-4">
@@ -148,12 +170,12 @@ export default function Step1Page() {
 
           <div>
             <label className="block text-[15px] font-bold text-gray-900 mb-3">How many days a week can you workout? *</label>
-            <div className="grid grid-cols-5 gap-2">
+            <div className="grid grid-cols-5 gap-1.5 sm:gap-2">
               {['2', '3', '4', '5', '6'].map((day) => (
                 <div 
                   key={day}
                   onClick={() => setValue('workoutDays', day, {shouldValidate: true})}
-                  className={`cursor-pointer border-2 rounded-xl py-3 text-center transition-all duration-200 font-bold ${
+                  className={`cursor-pointer border-2 rounded-xl py-3 text-center transition-all duration-200 font-bold text-sm sm:text-base ${
                     workDays === day ? 'border-[#FF0000] bg-[#FF0000] text-white shadow-md' : 'border-gray-200 text-gray-600 hover:border-gray-300 bg-white'
                   }`}
                 >
@@ -168,7 +190,7 @@ export default function Step1Page() {
       
       {/* Positioned Bottom Bar */}
       <div className="fixed bottom-0 left-0 w-full bg-[#F9F8F4]/90 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] z-[90]">
-        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-center gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-center gap-3 sm:gap-4">
           <Button type="button" variant="secondary" onClick={() => router.back()} className="flex-1 max-w-[200px] h-14 font-bold text-[15px] bg-white hover:bg-gray-50 text-gray-700 border border-gray-200">
             Back
           </Button>

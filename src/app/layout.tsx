@@ -19,11 +19,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${plusJakartaSans.variable} ${outfitFont.variable} font-sans bg-[#F9F8F4] text-gray-900 selection:bg-[#FF0000]/30`}>
-        <div className="flex min-h-screen flex-col">
+      <body className={`${plusJakartaSans.variable} ${outfitFont.variable} font-sans bg-[#F9F8F4] text-gray-900 selection:bg-[#FF0000]/30 overflow-x-hidden`}>
+        <div className="flex min-h-screen flex-col overflow-x-hidden">
           <Header />
-          <main className="flex-1 flex justify-center w-full">
-            <div className="w-full relative">{children}</div>
+          <main className="flex-1 flex justify-center w-full min-w-0">
+            <div className="w-full min-w-0 relative">{children}</div>
           </main>
           <Footer />
         </div>

@@ -27,11 +27,11 @@ export default function LandingPage() {
   return (
     <div className="flex flex-col flex-1 bg-white">
       {/* Hero Section */}
-      <section className="relative px-6 py-20 lg:py-32 overflow-hidden bg-gray-900 text-white flex items-center justify-center min-h-[80vh]">
+      <section className="relative px-4 sm:px-6 py-16 sm:py-20 lg:py-32 overflow-hidden bg-gray-900 text-white flex items-center justify-center min-h-[calc(100svh-64px)] md:min-h-[80vh]">
         <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-600 via-gray-900 to-black pointer-events-none" />
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <motion.h1 
-            className="text-6xl lg:text-8xl font-black mb-6 tracking-tighter font-outfit leading-tight"
+            className="text-[clamp(2.7rem,13vw,5.5rem)] lg:text-8xl font-black mb-6 tracking-tight font-outfit leading-[0.98] sm:leading-tight"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
@@ -39,17 +39,17 @@ export default function LandingPage() {
             A Reliable Guide To Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-[#FF0000] to-red-700">Transformation</span>
           </motion.h1>
           <motion.p 
-            className="text-xl lg:text-3xl text-gray-300 mb-10 max-w-3xl mx-auto font-medium"
+            className="text-base sm:text-xl lg:text-3xl text-gray-300 mb-8 sm:mb-10 max-w-3xl mx-auto font-medium leading-relaxed"
             {...fadeIn}
           >
-            We provide time-efficient workout plans and a variety of meal options for Sri Lankans living around the world.
+            We deliver time efficient training and flexible meal plans for Sri Lankans worldwide.
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <Button onClick={() => router.push("/packages")} size="lg" className="text-lg py-4 px-8 shadow-2xl shadow-primary/40 rounded-full font-black">
+            <Button onClick={() => router.push("/packages")} size="lg" className="text-base sm:text-lg py-4 px-7 sm:px-8 shadow-2xl shadow-primary/40 rounded-full font-black sm:w-auto">
               View Rates & Details
             </Button>
           </motion.div>
@@ -57,9 +57,9 @@ export default function LandingPage() {
       </section>
 
       {/* Testimonials Marquee Section */}
-      <section className="py-16 bg-gray-100 border-y border-gray-200 overflow-hidden relative">
-        <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-gray-100 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none" />
+      <section className="py-12 sm:py-16 bg-gray-100 border-y border-gray-200 overflow-hidden relative">
+        <div className="absolute inset-y-0 left-0 w-12 sm:w-32 bg-gradient-to-r from-gray-100 to-transparent z-10 pointer-events-none" />
+        <div className="absolute inset-y-0 right-0 w-12 sm:w-32 bg-gradient-to-l from-gray-100 to-transparent z-10 pointer-events-none" />
         
         <div className="mb-10 text-center px-6">
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 font-outfit tracking-tight">
@@ -88,22 +88,22 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-24 px-6 bg-[#F9F8F4]">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-[#F9F8F4]">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-20">
             <h2 className="text-4xl lg:text-5xl font-black mb-4 text-gray-900 font-outfit tracking-tight">How It Works</h2>
             <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto text-center">
-              Our packages include regular check-ins to modify the plan for continuous progress, ensuring your results truly last.
+              Evidence-based coaching. Structured, tracked, and adjusted for continuous progress
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {[
               { title: "Customized Workouts", desc: "Training plan personalized to your fitness capacity, gym environment, or home setup.", icon: Dumbbell },
-              { title: "Personalized Menus", desc: "Meal plans customized to your goals with options tailored to your local constraints and preferences.", icon: Utensils },
-              { title: "Form Review", desc: "Upload physical assessment videos and training clips so we can correct your technique and adjust volume.", icon: FileVideo },
+              { title: "Personalized Menus", desc: "Flexible meal plans tailored to your location, preferences, and changing needs", icon: Utensils },
+              { title: "Form Review", desc: "Expert technique review with actionable feedback and training adjustments to improve performance.", icon: FileVideo },
               { title: "Whatsapp Support", desc: "Get answers quickly with guaranteed reply windows directly through WhatsApp voice notes or texts.", icon: MessageCircle },
-              { title: "Ongoing Adjustments", desc: "We review your weekly logging stats and check-ins to continuously fine-tune your programming.", icon: ShieldCheck }
+              { title: "Ongoing Adjustments", desc: "Your plan is continuously adapted based on performance, feedback, and actual training & diet effort.", icon: ShieldCheck }
             ].map((benefit, i) => (
               <motion.div 
                 key={i}
@@ -111,7 +111,7 @@ export default function LandingPage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-white p-10 rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-2 border-transparent hover:border-[#FF0000]/20 transition-all duration-500 group"
+                className="bg-white p-6 sm:p-8 lg:p-10 rounded-3xl lg:rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border-2 border-transparent hover:border-[#FF0000]/20 transition-all duration-500 group"
               >
                 <div className="h-16 w-16 bg-gradient-to-br from-red-500/20 to-red-600/10 rounded-2xl flex items-center justify-center mb-8 text-[#FF0000] group-hover:scale-110 transition-transform duration-500">
                   <benefit.icon size={32} strokeWidth={2} />
