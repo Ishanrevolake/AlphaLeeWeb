@@ -1,8 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 
-// These should be configured in your .env.local file
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-key';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabasePublishableKey =
+  process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-// For server-side operations, we use a service role key if available to bypass RLS
-export const supabase = createClient(supabaseUrl, supabaseServiceKey);
+if (!supabaseUrl || !supabasePublishableKey) {
+  throw new Error('Missing public Supabase environment variables.');
+}
+
+export const supabase = createClient(supabaseUrl, supabasePublishableKey);

@@ -9,9 +9,9 @@ export default function RecipeBookPage() {
   return (
     <div className="flex flex-col flex-1 bg-[#F9F8F4]">
       {/* Hero Section */}
-      <section className="relative px-6 py-20 lg:py-24 overflow-hidden bg-gray-900 text-white flex items-center justify-center min-h-[70vh]">
+      <section className="relative px-4 sm:px-6 py-16 sm:py-20 lg:py-24 overflow-hidden bg-gray-900 text-white flex items-center justify-center min-h-[70vh]">
         <div className="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-500/40 via-gray-900 to-black pointer-events-none" />
-        <div className="relative z-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-12">
+        <div className="relative z-10 max-w-5xl mx-auto flex flex-col md:flex-row items-center gap-10 lg:gap-12">
           <motion.div 
             className="flex-1 text-center md:text-left"
             initial={{ opacity: 0, x: -30 }}
@@ -22,10 +22,10 @@ export default function RecipeBookPage() {
               <BookOpen size={16} className="mr-2" />
               Over 40 Recipes
             </div>
-            <h1 className="text-4xl lg:text-6xl font-black mb-6 tracking-tight font-outfit">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black mb-6 tracking-tight font-outfit">
               Alpha Chef <span className="text-[#FF0000]">Recipe Book</span>
             </h1>
-            <p className="text-xl text-gray-300 font-medium mb-8 leading-relaxed max-w-xl mx-auto md:mx-0">
+            <p className="text-lg sm:text-xl text-gray-300 font-medium mb-8 leading-relaxed max-w-xl mx-auto md:mx-0">
               Stop surviving on bland, repetitive meals. It&apos;s time to make your health and fitness journey unbelievably enjoyable.
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
@@ -58,8 +58,8 @@ export default function RecipeBookPage() {
       </section>
 
       {/* Details Section */}
-      <section className="py-24 px-6 bg-white">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-16">
+      <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white">
+        <div className="max-w-4xl mx-auto flex flex-col md:flex-row gap-10 md:gap-16">
           <motion.div 
             className="flex-1 space-y-8"
             initial={{ opacity: 0, y: 30 }}
@@ -74,7 +74,7 @@ export default function RecipeBookPage() {
               </p>
             </div>
             
-            <div className="bg-gray-50 p-8 rounded-3xl border border-gray-100">
+            <div className="bg-gray-50 p-6 sm:p-8 rounded-3xl border border-gray-100">
               <p className="text-lg text-gray-700 italic font-medium leading-relaxed">
                 &quot;Alpha Lee Fitness with nearly a decade of coaching experience brings to you its very own recipe book to help you reach your fitness goals!&quot;
               </p>
@@ -88,7 +88,7 @@ export default function RecipeBookPage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.2 }}
           >
-            <div className="bg-red-500/5 border-2 border-red-500/20 p-8 rounded-3xl">
+            <div className="bg-red-500/5 border-2 border-red-500/20 p-6 sm:p-8 rounded-3xl">
               <h3 className="text-xl font-bold mb-6 text-gray-900">Why You Need This Book</h3>
               <ul className="space-y-4">
                 {[

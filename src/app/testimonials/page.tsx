@@ -61,35 +61,35 @@ export default function TestimonialsPage() {
   const galleryImages = [T1, T2, T3, T4, T5, T6];
 
   return (
-    <div className="flex flex-col flex-1 bg-gray-50 min-h-screen pt-24 pb-32">
-      <div className="max-w-7xl mx-auto px-6 w-full">
+    <div className="flex flex-col flex-1 bg-gray-50 min-h-screen pt-16 sm:pt-24 pb-20 sm:pb-32">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 w-full">
         
         {/* Header */}
-        <div className="text-center mb-20">
+        <div className="text-center mb-12 sm:mb-20">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-[#FF0000] font-bold tracking-[0.2em] uppercase text-sm mb-4 font-sans">Real Results</h2>
-            <h1 className="text-4xl md:text-6xl font-black text-gray-900 tracking-tight mb-6 font-outfit">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black text-gray-900 tracking-tight mb-6 font-outfit">
               Don&apos;t just take our word for it.
             </h1>
-            <p className="text-xl text-gray-500 font-medium max-w-2xl mx-auto">
+            <p className="text-lg sm:text-xl text-gray-500 font-medium max-w-2xl mx-auto">
               See what dedicated clients have achieved through tailored coaching, precision nutrition, and relentless accountability.
             </p>
           </motion.div>
         </div>
 
         {/* Reviews Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
           {REVIEWS.map((review, i) => (
             <motion.div 
               key={i}
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white p-8 rounded-3xl shadow-sm border border-gray-100 relative group hover:shadow-xl transition-shadow"
+              className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 relative group hover:shadow-xl transition-shadow"
             >
               <div className="absolute top-8 right-8 text-gray-100 group-hover:text-[#cca751]/10 transition-colors">
                 <Quote size={48} className="text-gray-100 group-hover:text-[#FF0000]/10 transition-colors" />
@@ -119,7 +119,7 @@ export default function TestimonialsPage() {
         </div>
 
         {/* Transformation Gallery */}
-        <div className="mt-32 mb-10 text-center">
+        <div className="mt-20 sm:mt-32 mb-10 text-center">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -156,7 +156,7 @@ export default function TestimonialsPage() {
 
         {/* CTA section after reviews */}
         <motion.div 
-          className="mt-32 text-center bg-gray-900 rounded-[3rem] p-12 md:p-20 relative overflow-hidden"
+          className="mt-20 sm:mt-32 text-center bg-gray-900 rounded-3xl md:rounded-[3rem] p-6 sm:p-12 md:p-20 relative overflow-hidden"
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}

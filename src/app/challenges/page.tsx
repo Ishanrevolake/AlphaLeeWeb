@@ -22,14 +22,14 @@ export default function ChallengesPage() {
   };
 
   return (
-    <div className="flex flex-col flex-1 items-center justify-center min-h-screen px-6 py-12 bg-[#F9F8F4]">
+    <div className="flex flex-col flex-1 items-center justify-center min-h-screen px-4 sm:px-6 py-10 sm:py-12 bg-[#F9F8F4]">
       <motion.div 
         initial={{ opacity: 0, scale: 0.95, y: 20 }} 
         animate={{ opacity: 1, scale: 1, y: 0 }}
-        className="max-w-5xl w-full bg-white p-0 rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col md:flex-row"
+        className="max-w-5xl w-full bg-white p-0 rounded-3xl lg:rounded-[2.5rem] shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 overflow-hidden flex flex-col md:flex-row"
       >
         {/* Left Side: Logo & Info */}
-        <div className="flex-1 bg-gray-900 p-12 md:p-16 flex flex-col justify-center text-left relative overflow-hidden">
+        <div className="flex-1 bg-gray-900 p-8 sm:p-12 md:p-16 flex flex-col justify-center text-left relative overflow-hidden">
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-red-600 via-gray-900 to-black pointer-events-none" />
           
           <div className="z-10 h-16 w-16 bg-white/10 rounded-2xl flex items-center justify-center mb-8 backdrop-blur-md border border-white/20">
@@ -38,7 +38,7 @@ export default function ChallengesPage() {
             </svg>
           </div>
           
-          <h1 className="z-10 text-4xl lg:text-5xl font-black mb-6 tracking-tighter text-white font-outfit">
+          <h1 className="z-10 text-3xl sm:text-4xl lg:text-5xl font-black mb-6 tracking-tight text-white font-outfit">
             ALF <span className="text-[#FF0000]">CHALLENGES</span>
           </h1>
           <p className="z-10 text-lg text-gray-400 font-medium leading-relaxed max-w-sm">
@@ -47,7 +47,7 @@ export default function ChallengesPage() {
         </div>
 
         {/* Right Side: Form */}
-        <div className="flex-1 p-10 md:p-16 bg-white flex flex-col justify-center">
+        <div className="flex-1 p-6 sm:p-10 md:p-16 bg-white flex flex-col justify-center">
           {submitted ? (
             <motion.div 
               initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }}
@@ -77,7 +77,7 @@ export default function ChallengesPage() {
                   />
                 </div>
                 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5 focus-within:text-[#FF0000] text-gray-500 transition-colors">
                     <label htmlFor="dob" className="font-bold text-[13px] ml-1 uppercase tracking-wider">Date of Birth <span className="text-[#FF0000]">*</span></label>
                     <Input 

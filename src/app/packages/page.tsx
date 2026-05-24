@@ -7,6 +7,7 @@ import { Check, X } from 'lucide-react';
 import { useFunnelStore } from '@/store/funnelStore';
 import { PlanCard } from '@/components/ui/PlanCard';
 import { PACKAGES, PACKAGE_CATEGORIES, type PackageCategory } from '@/lib/packages';
+import { supabase } from '@/lib/supabase';
 
 export default function PackagesPage() {
   const router = useRouter();
@@ -21,6 +22,12 @@ export default function PackagesPage() {
   const filteredPackages = activeCategory === 'All'
     ? PACKAGES
     : PACKAGES.filter(p => p.category === activeCategory);
+
+  const startSignupForPackage = async (packageId: string) => {
+    setPackage(packageId);
+    const { data } = await supabase.auth.getSession();
+    router.push(data.session ? '/signup/step-2' : '/signup/step-1');
+  };
 
   return (
     <div className="min-h-screen py-8 sm:py-12 px-4 sm:px-6 flex flex-col items-center">
@@ -110,8 +117,7 @@ export default function PackagesPage() {
                 onClick={() => setPackage(pkg.id)}
                 onInfoClick={() => setInfoPackage(pkg)}
                 onStartNow={() => {
-                  setPackage(pkg.id);
-                  router.push('/signup/step-1');
+                  startSignupForPackage(pkg.id);
                 }}
               />
             ))}

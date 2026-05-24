@@ -23,16 +23,16 @@ export function InterestForm() {
   ];
 
   return (
-    <section className="py-24 px-6 bg-white border-t border-gray-100 relative z-20">
-      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-16 items-start">
+    <section className="py-16 sm:py-24 px-4 sm:px-6 bg-white border-t border-gray-100 relative z-20">
+      <div className="max-w-6xl mx-auto flex flex-col lg:flex-row gap-10 lg:gap-16 items-start">
         
         {/* Left Side */}
-        <div className="lg:w-1/2 flex flex-col justify-start pt-10">
-          <h2 className="text-6xl md:text-8xl font-black mb-8 tracking-tighter font-outfit leading-[0.95]">
+        <div className="lg:w-1/2 flex flex-col justify-start pt-0 lg:pt-10">
+          <h2 className="text-[clamp(2.75rem,14vw,5.5rem)] md:text-8xl font-black mb-6 sm:mb-8 tracking-tight font-outfit leading-[0.95]">
             <span className="text-[#FF0000]">Interested</span><br />
             in Joining?
           </h2>
-          <p className="text-gray-800 font-medium text-lg max-w-sm leading-relaxed">
+          <p className="text-gray-800 font-medium text-base sm:text-lg max-w-sm leading-relaxed">
             Submit your interest and we will WhatsApp you and get your set up & payment process started..
           </p>
         </div>
@@ -60,7 +60,7 @@ export function InterestForm() {
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -10 }}
                     transition={{ duration: 0.15 }}
-                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-gray-100 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] overflow-hidden z-20 py-2"
+                    className="absolute top-full left-0 right-0 mt-3 bg-white border border-gray-100 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.08)] overflow-hidden z-20 py-2 max-h-72 overflow-y-auto"
                   >
                     {planOptions.map((plan) => (
                       <div 
@@ -98,15 +98,15 @@ export function InterestForm() {
               required
             />
 
-            <div className="flex items-center space-x-3 pt-2 pl-2">
+            <div className="flex items-start gap-3 pt-2 pl-1 sm:pl-2">
               <input type="checkbox" id="guarantee" className="w-5 h-5 rounded border-gray-300 text-[#FF0000] focus:ring-[#FF0000] cursor-pointer" />
-              <label htmlFor="guarantee" className="text-gray-800 font-semibold cursor-pointer text-[15px]">
+              <label htmlFor="guarantee" className="text-gray-800 font-semibold cursor-pointer text-[14px] sm:text-[15px] leading-relaxed">
                 Interested in the <span className="text-[#FF0000] hover:underline" onClick={(e) => { e.preventDefault(); setShowGuaranteeModal(true); }}>24hr Reply Guarantee?</span>
               </label>
             </div>
 
             <div className="pt-6">
-              <Button type="submit" className="rounded-full px-8 h-12 text-lg font-bold tracking-wide bg-black hover:bg-neutral-800 text-white shadow-xl transition-all w-32 flex justify-center items-center">
+              <Button type="submit" className="rounded-full px-8 h-12 text-base sm:text-lg font-bold tracking-wide bg-black hover:bg-neutral-800 text-white shadow-xl transition-all w-full sm:w-32 flex justify-center items-center">
                 Submit
               </Button>
             </div>
@@ -119,7 +119,7 @@ export function InterestForm() {
       {/* Guarantee Modal */}
       <AnimatePresence>
         {showGuaranteeModal && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 pt-[10vh]">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             <motion.div 
               initial={{ opacity: 0 }} 
               animate={{ opacity: 1 }} 
@@ -132,7 +132,7 @@ export function InterestForm() {
               animate={{ opacity: 1, scale: 1, y: 0 }} 
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ ease: "easeOut", duration: 0.2 }}
-              className="relative w-full max-w-lg bg-white rounded-3xl p-10 shadow-2xl z-[101]"
+              className="relative w-full max-w-lg bg-white rounded-3xl p-6 sm:p-10 shadow-2xl z-[101] max-h-[90svh] overflow-y-auto"
             >
               <button 
                 onClick={() => setShowGuaranteeModal(false)}
