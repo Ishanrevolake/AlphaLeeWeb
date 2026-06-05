@@ -81,8 +81,8 @@ export function Footer() {
           (c) {new Date().getFullYear()} Alpha Lee Fitness. All Rights Reserved.
         </p>
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
-          <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>
-          <Link href="#" className="hover:text-white transition-colors">Terms of Service</Link>
+          <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
+          <Link href="/terms-and-conditions" className="hover:text-white transition-colors">Terms of Service</Link>
         </div>
       </div>
     </footer>
