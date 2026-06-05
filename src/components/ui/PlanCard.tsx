@@ -67,7 +67,7 @@ export const PlanCard: React.FC<PlanCardProps> = ({
         <Button 
           onClick={(e) => { e.stopPropagation(); onStartNow(e); }} 
           size="lg" 
-          className={`w-full mt-2 font-bold ${isSelected ? 'bg-primary text-white' : 'bg-gray-100 text-gray-900 border-2 border-transparent hover:border-primary/20'}`}
+          className={`w-full mt-2 font-bold ${isSelected ? 'bg-primary text-white' : 'bg-gray-100 !text-gray-900 border-2 border-transparent hover:!text-white hover:border-primary/20'}`}
         >
           Start Now
         </Button>
