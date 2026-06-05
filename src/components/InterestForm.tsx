@@ -47,7 +47,7 @@ export function InterestForm() {
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                 className={`w-full px-6 py-4 rounded-full border ${isDropdownOpen ? 'border-primary ring-2 ring-primary/20 bg-white' : 'border-gray-200 bg-[#f8f9fa]'} hover:bg-white text-gray-800 font-medium cursor-pointer transition-all shadow-sm flex items-center justify-between text-[15px]`}
               >
-                <span className={selectedPlan ? 'text-gray-900 font-bold' : 'text-gray-400'}>
+                <span className={`min-w-0 truncate ${selectedPlan ? 'text-gray-900 font-bold' : 'text-gray-400'}`}>
                   {selectedPlan || "Subscription you're interested in"}
                 </span>
                 <ChevronDown size={20} className={`text-gray-400 transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
@@ -82,10 +82,10 @@ export function InterestForm() {
             
             <div className="relative flex items-center">
                <span className="absolute left-6 top-1/2 -translate-y-1/2 flex items-center text-gray-400 font-medium">
-                 🇱🇰 <span className="mx-1 text-gray-500">+94</span>
+                 Sri Lanka <span className="mx-1 text-gray-500">+94</span>
                </span>
                <input 
-                 className="w-full px-6 py-4 pl-[88px] border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 bg-[#f8f9fa] hover:bg-white focus:bg-white placeholder:text-gray-400 font-medium shadow-sm text-[15px]"
+                 className="w-full px-6 py-4 pl-[132px] border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all duration-200 bg-[#f8f9fa] hover:bg-white focus:bg-white placeholder:text-gray-400 font-medium shadow-sm text-[15px]"
                  placeholder="Whatsapp Number" 
                  required 
                />

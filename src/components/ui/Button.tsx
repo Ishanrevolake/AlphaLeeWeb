@@ -13,18 +13,18 @@ interface ButtonProps extends Omit<HTMLMotionProps<"button">, "children"> {
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', isLoading, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center rounded-2xl font-bold transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2';
+    const baseStyles = 'inline-flex min-w-0 items-center justify-center rounded-2xl text-center font-bold uppercase tracking-[0.08em] transition-colors focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2';
     
     const variants = {
-      primary: 'bg-gradient-to-r from-primary to-primary-dark text-white shadow-[0_8px_30px_rgb(255,0,0,0.3)] hover:shadow-[0_8px_30px_rgb(255,0,0,0.5)] border border-primary/50 relative overflow-hidden group',
-      secondary: 'bg-white/80 backdrop-blur-md text-gray-900 border border-gray-200/60 hover:bg-white shadow-sm hover:shadow',
-      outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white',
+      primary: 'bg-[#FF0000] text-white border-2 border-[#FF0000] alpha-red-block-shadow hover:bg-[#e60000] hover:border-[#e60000] relative overflow-hidden group',
+      secondary: 'bg-white text-gray-900 border-2 border-gray-900 alpha-black-block-shadow hover:bg-gray-50',
+      outline: 'bg-white border-2 border-gray-900 text-gray-900 alpha-black-block-shadow hover:bg-gray-900 hover:text-white',
     };
 
     const sizes = {
       sm: 'px-4 py-2 text-sm',
       md: 'px-6 py-3 text-base',
-      lg: 'px-8 py-4 text-lg w-full',
+      lg: 'px-8 py-4 text-lg',
     };
 
     return (

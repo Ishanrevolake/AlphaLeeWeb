@@ -47,9 +47,9 @@ export default function ProcessDetailsPage() {
           <section>
             <h2 className="text-2xl sm:text-3xl font-black mb-6 border-b-2 border-red-500/20 pb-4 inline-block tracking-tight text-gray-800">STARTER WEEK</h2>
             <div className="bg-white rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-8 md:p-12 shadow-[0_10px_40px_rgba(0,0,0,0.03)] border border-gray-100 space-y-6">
-              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">Once your plan is delivered, you’ll review it and raise any questions, requests or clarifications before starting.</p>
-              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">During the first week, you’ll submit videos of each exercise using manageable weights. Your coach will assess your technique before progressing to heavier weights and will refine your program based on his evaluation.</p>
-              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">You’ll also begin with a minimum of 8-10 meal options, adjusted based on your dietary preferences and local availability. (Vegan options in Sri Lanka may be more limited due to ingredient constraints).</p>
+              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">Once your plan is delivered, you&apos;ll review it and raise any questions, requests or clarifications before starting.</p>
+              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">During the first week, you&apos;ll submit videos of each exercise using manageable weights. Your coach will assess your technique before progressing to heavier weights and will refine your program based on his evaluation.</p>
+              <p className="text-gray-600 text-[17px] font-medium leading-relaxed">You&apos;ll also begin with a minimum of 8-10 meal options, adjusted based on your dietary preferences and local availability. (Vegan options in Sri Lanka may be more limited due to ingredient constraints).</p>
             </div>
           </section>
 

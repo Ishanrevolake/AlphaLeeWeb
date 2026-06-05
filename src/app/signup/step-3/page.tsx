@@ -337,12 +337,12 @@ export default function Step3Page() {
                           : 'border-gray-200 bg-white/70 hover:border-gray-300 hover:bg-white'
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <div>
+                      <div className="flex min-w-0 items-start justify-between gap-3">
+                        <div className="min-w-0">
                           <div className="text-[13px] font-black text-gray-900">{pkg.title}</div>
                           <div className="mt-1 text-xs font-bold text-gray-500">{pkg.subtitle}</div>
                         </div>
-                        <div className="text-sm font-black text-gray-900">{pkg.price}</div>
+                        <div className="shrink-0 text-sm font-black text-gray-900">{pkg.price}</div>
                       </div>
                     </button>
                   );
@@ -413,10 +413,10 @@ export default function Step3Page() {
 
         <div className="space-y-5">
           <div className="rounded-3xl border border-gray-100 bg-[#F9F8F4] p-5 sm:p-6">
-            <div className="mb-4 flex items-start justify-between gap-4 border-b border-gray-200 pb-4">
-              <div>
+            <div className="mb-4 flex flex-col gap-4 border-b border-gray-200 pb-4 sm:flex-row sm:items-start sm:justify-between">
+              <div className="min-w-0">
                 <div className="text-[12px] font-black uppercase tracking-[0.18em] text-gray-500">Payment Reference</div>
-                <div className="mt-1 text-2xl font-black text-gray-900">{paymentReference}</div>
+                <div className="mt-1 break-all text-2xl font-black text-gray-900">{paymentReference}</div>
               </div>
               <button
                 type="button"
@@ -431,9 +431,9 @@ export default function Step3Page() {
             <div className="space-y-3">
               {BANK_DETAILS.map((detail) => (
                 <div key={detail.label} className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
-                  <div>
+                  <div className="min-w-0">
                     <div className="text-[11px] font-black uppercase tracking-[0.16em] text-gray-400">{detail.label}</div>
-                    <div className="text-sm font-bold text-gray-900 sm:text-base">{detail.value}</div>
+                    <div className="break-all text-sm font-bold text-gray-900 sm:text-base">{detail.value}</div>
                   </div>
                   <button
                     type="button"
@@ -455,7 +455,7 @@ export default function Step3Page() {
               {slipName ? 'Payment slip selected' : 'Upload payment slip'}
             </span>
             <span className="mt-1 text-sm font-semibold text-gray-500">
-              {slipName || 'PNG, JPG, or PDF. This will later upload to Supabase Storage.'}
+              <span className="block max-w-full break-words">{slipName || 'PNG, JPG, or PDF. This will later upload to Supabase Storage.'}</span>
             </span>
             <input
               type="file"
@@ -478,10 +478,10 @@ export default function Step3Page() {
         )}
 
         <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
-          <Button variant="secondary" onClick={() => router.push('/signup/step-2')} className="h-14 font-bold">
+          <Button variant="secondary" onClick={() => router.push('/signup/step-2')} className="h-14 w-full font-bold sm:w-auto">
             Back to Details
           </Button>
-          <Button onClick={submitPayment} size="lg" isLoading={isSubmitting} className="h-14 font-bold bg-gray-900 hover:bg-gray-800 text-white sm:w-auto">
+          <Button onClick={submitPayment} size="lg" isLoading={isSubmitting} className="h-14 w-full font-bold bg-gray-900 hover:bg-gray-800 text-white sm:w-auto">
             Submit for Verification
           </Button>
         </div>

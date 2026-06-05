@@ -29,3 +29,22 @@ body {
 .scrolling-wrapper:hover .scrolling-marquee {
   animation-play-state: paused;
 }
+
+@layer utilities {
+  .sharp-edge,
+  .sharp-edge * {
+    border-radius: 0 !important;
+  }
+
+  .alpha-red-block-shadow {
+    box-shadow: 0 7px 0 rgba(255, 0, 0, 0.22) !important;
+  }
+
+  .alpha-black-block-shadow {
+    box-shadow: 5px 6px 0 #0a0a0a !important;
+  }
+
+  .alpha-panel-shadow {
+    box-shadow: 8px 8px 0 #0a0a0a !important;
+  }
+}

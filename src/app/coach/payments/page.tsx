@@ -341,7 +341,9 @@ export default function CoachPaymentsPage() {
                           {statusLabels[payment.status]}
                         </span>
                       </div>
-                      <div className="mt-2 text-sm font-semibold text-gray-500">{profile?.email || "No email"} | {profile?.phone || "No phone"}</div>
+                      <div className="mt-2 break-words text-sm font-semibold text-gray-500">
+                        {profile?.email || "No email"} | {profile?.phone || "No phone"}
+                      </div>
                       <div className="mt-4 grid gap-3 text-sm font-bold text-gray-700 sm:grid-cols-2 lg:grid-cols-4">
                         <Info label="Reference" value={payment.reference} />
                         <Info label="Amount" value={`Rs. ${Number(payment.amount_lkr || 0).toLocaleString("en-US")}`} />
@@ -355,18 +357,18 @@ export default function CoachPaymentsPage() {
                       )}
                     </div>
 
-                    <div className="flex shrink-0 flex-wrap gap-3 lg:justify-end">
+                    <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
                       {payment.signedSlipUrl ? (
                         <Link
                           href={payment.signedSlipUrl}
                           target="_blank"
-                          className="inline-flex h-12 items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-5 text-sm font-black text-gray-700 shadow-sm transition-colors hover:text-[#FF0000]"
+                          className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-5 text-sm font-black text-gray-700 shadow-sm transition-colors hover:text-[#FF0000] sm:w-auto"
                         >
                           <ExternalLink size={16} />
                           Open slip
                         </Link>
                       ) : (
-                        <span className="inline-flex h-12 items-center rounded-full border border-gray-200 bg-gray-50 px-5 text-sm font-black text-gray-400">
+                        <span className="inline-flex h-12 w-full items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-5 text-sm font-black text-gray-400 sm:w-auto">
                           No slip
                         </span>
                       )}
@@ -375,7 +377,7 @@ export default function CoachPaymentsPage() {
                         onClick={() => updatePaymentStatus(payment.id, "verified")}
                         isLoading={activePaymentId === payment.id}
                         disabled={payment.status === "verified"}
-                        className="h-12 gap-2 rounded-full bg-emerald-600 px-5 text-white shadow-none hover:bg-emerald-700"
+                        className="h-12 w-full gap-2 rounded-full bg-emerald-600 px-5 text-white shadow-none hover:bg-emerald-700 sm:w-auto"
                       >
                         <CheckCircle2 size={16} />
                         Verify
@@ -390,7 +392,7 @@ export default function CoachPaymentsPage() {
                           }
                         }}
                         disabled={payment.status === "rejected"}
-                        className="h-12 gap-2 rounded-full px-5 text-red-600"
+                        className="h-12 w-full gap-2 rounded-full px-5 text-red-600 sm:w-auto"
                       >
                         <XCircle size={16} />
                         Reject

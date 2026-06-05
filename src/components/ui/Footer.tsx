@@ -78,7 +78,7 @@ export function Footer() {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
         <p className="text-sm text-gray-500 font-medium tracking-wide text-center md:text-left">
-          © {new Date().getFullYear()} Alpha Lee Fitness. All Rights Reserved.
+          (c) {new Date().getFullYear()} Alpha Lee Fitness. All Rights Reserved.
         </p>
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
           <Link href="#" className="hover:text-white transition-colors">Privacy Policy</Link>

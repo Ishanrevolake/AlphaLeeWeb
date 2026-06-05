@@ -30,7 +30,7 @@ export default function RecipeBookPage() {
             </p>
             <div className="flex flex-col sm:flex-row items-center gap-4 justify-center md:justify-start">
               <Button size="lg" className="w-full sm:w-auto text-lg py-6 px-10 shadow-xl shadow-red-500/40 bg-[#FF0000] hover:bg-red-700 text-white rounded-full font-black">
-                Buy Now — Rs. 4,950
+                Buy Now - Rs. 4,950
               </Button>
             </div>
           </motion.div>

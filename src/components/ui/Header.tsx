@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, ChevronDown, Eye, EyeOff, LayoutDashboard, Lock, LogIn, LogOut, Menu, UserCircle, X } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, LayoutDashboard, Lock, LogIn, LogOut, Menu, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { supabase } from "@/lib/supabase";
@@ -25,10 +25,11 @@ export function Header() {
   const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
 
   const links = [
-    { href: "/packages", label: "Find a Programme" },
     { href: "/process-details", label: "Process Details" },
-    { href: "/recipe-book", label: "Alpha Chef Recipe Book" },
-    { href: "/blog", label: "Fitness Blog" }
+    { href: "/recipe-book", label: "Recipe Book" },
+    { href: "/blog", label: "Blog" },
+    { href: "/testimonials", label: "Testimonials" },
+    { href: "/about", label: "About Us" }
   ];
 
   useEffect(() => {
@@ -118,9 +119,9 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full backdrop-blur-xl bg-[#F9F8F4]/80 border-b border-gray-200/50 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+    <header className="sticky top-0 z-50 w-full bg-black text-white border-b border-white/10 shadow-[0_1px_3px_rgba(0,0,0,0.2)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 md:h-[76px] flex items-center justify-between">
-        <Link href="/" className="font-black text-xl sm:text-2xl tracking-tighter hover:text-gray-600 transition-colors" onClick={() => setIsOpen(false)}>
+        <Link href="/" className="font-black text-xl sm:text-2xl tracking-tighter text-white hover:text-gray-300 transition-colors" onClick={() => setIsOpen(false)}>
           ALPHA LEE
         </Link>
         <nav className="hidden lg:flex items-center space-x-1 font-semibold text-[12px] xl:text-[14px] xl:space-x-2 tracking-wide">
@@ -130,28 +131,12 @@ export function Header() {
               <Link 
                 key={link.href} 
                 href={link.href} 
-                className={`transition-all duration-200 whitespace-nowrap px-3 py-1.5 rounded-lg ${isActive ? 'text-[#FF0000] bg-red-500/10 font-bold' : 'text-gray-500 hover:text-[#FF0000] hover:bg-gray-100'}`}
+                className={`transition-all duration-200 whitespace-nowrap px-3 py-1.5 rounded-lg ${isActive ? 'text-[#FF0000] bg-red-500/15 font-bold' : 'text-white/75 hover:text-white hover:bg-white/10'}`}
               >
                 {link.label}
               </Link>
             );
           })}
-          
-          <div className="relative group">
-            <button className={`flex items-center gap-1 transition-all duration-200 whitespace-nowrap px-3 py-1.5 rounded-lg ${(pathname === "/testimonials" || pathname === "/about") ? 'text-[#FF0000] bg-red-500/10 font-bold' : 'text-gray-500 hover:text-[#FF0000] hover:bg-gray-100'}`}>
-              More <ChevronDown size={14} className="group-hover:rotate-180 transition-transform duration-200" />
-            </button>
-            <div className="absolute right-0 top-full pt-2 opacity-0 invisible group-hover:visible group-hover:opacity-100 transition-all duration-200 z-50">
-              <div className="w-40 bg-white border border-gray-100 shadow-xl rounded-xl py-2 flex flex-col">
-                <Link href="/testimonials" className={`px-4 py-2 text-[13px] hover:bg-gray-50 transition-colors ${pathname === '/testimonials' ? 'text-[#FF0000] font-bold' : 'text-gray-600 hover:text-[#FF0000]'}`}>
-                  Testimonials
-                </Link>
-                <Link href="/about" className={`px-4 py-2 text-[13px] hover:bg-gray-50 transition-colors ${pathname === '/about' ? 'text-[#FF0000] font-bold' : 'text-gray-600 hover:text-[#FF0000]'}`}>
-                  About Us
-                </Link>
-              </div>
-            </div>
-          </div>
         </nav>
 
         <div className="flex items-center gap-2">
@@ -160,7 +145,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={() => setIsProfileOpen((open) => !open)}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-gray-900 text-white transition-colors hover:bg-[#FF0000]"
+                className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-900 transition-colors hover:bg-[#FF0000] hover:text-white"
                 aria-label="Open profile menu"
                 aria-expanded={isProfileOpen}
               >
@@ -200,7 +185,7 @@ export function Header() {
             <button
               type="button"
               onClick={openLogin}
-              className="hidden sm:inline-flex h-10 items-center gap-2 rounded-full bg-gray-900 px-4 text-[13px] font-black text-white transition-colors hover:bg-[#FF0000]"
+              className="hidden sm:inline-flex h-10 items-center gap-2 rounded-full bg-white px-4 text-[13px] font-black text-gray-900 transition-colors hover:bg-[#FF0000] hover:text-white"
             >
               <LogIn size={16} />
               Login
@@ -209,7 +194,7 @@ export function Header() {
 
           <button
             type="button"
-            className="lg:hidden h-10 w-10 rounded-full border border-gray-200 bg-white/80 flex items-center justify-center text-gray-800"
+            className="lg:hidden h-10 w-10 rounded-full border border-white/20 bg-white/10 flex items-center justify-center text-white"
             onClick={() => setIsOpen((open) => !open)}
             aria-label={isOpen ? "Close menu" : "Open menu"}
             aria-expanded={isOpen}
@@ -220,16 +205,16 @@ export function Header() {
       </div>
 
       {isOpen && (
-        <nav className="lg:hidden border-t border-gray-200/70 bg-[#F9F8F4]/95 px-4 py-4 shadow-lg max-h-[calc(100svh-4rem)] overflow-y-auto">
+        <nav className="lg:hidden border-t border-white/10 bg-black px-4 py-4 shadow-lg max-h-[calc(100svh-4rem)] overflow-y-auto">
           <div className="flex flex-col gap-2 font-bold text-sm">
-            {[...links, { href: "/testimonials", label: "Testimonials" }, { href: "/about", label: "About Us" }].map((link) => {
+            {links.map((link) => {
               const isActive = pathname === link.href;
               return (
                 <Link
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsOpen(false)}
-                  className={`rounded-2xl px-4 py-3 transition-colors ${isActive ? "bg-red-500/10 text-[#FF0000]" : "bg-white/70 text-gray-700 hover:text-[#FF0000]"}`}
+                  className={`rounded-2xl px-4 py-3 transition-colors ${isActive ? "bg-red-500/15 text-[#FF0000]" : "bg-white/10 text-white hover:bg-white/15 hover:text-white"}`}
                 >
                   {link.label}
                 </Link>
@@ -241,7 +226,7 @@ export function Header() {
                   type="button"
                   onClick={goToDashboard}
                   disabled={isCheckingDashboard}
-                  className="flex items-center gap-3 rounded-2xl bg-white/70 px-4 py-3 text-left font-black text-gray-700 transition-colors hover:text-[#FF0000] disabled:cursor-wait disabled:opacity-60"
+                  className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 text-left font-black text-white transition-colors hover:bg-white/15 disabled:cursor-wait disabled:opacity-60"
                 >
                   <LayoutDashboard size={18} />
                   {isCheckingDashboard ? "Checking..." : "Go to Dashboard"}
@@ -249,7 +234,7 @@ export function Header() {
                 <button
                   type="button"
                   onClick={signOut}
-                  className="flex items-center gap-3 rounded-2xl bg-gray-900 px-4 py-3 text-left font-black text-white transition-colors hover:bg-[#FF0000]"
+                  className="flex items-center gap-3 rounded-2xl bg-white px-4 py-3 text-left font-black text-gray-900 transition-colors hover:bg-[#FF0000] hover:text-white"
                 >
                   <LogOut size={18} />
                   Sign Out
@@ -259,7 +244,7 @@ export function Header() {
               <button
                 type="button"
                 onClick={openLogin}
-                className="rounded-2xl bg-gray-900 px-4 py-3 text-left font-black text-white transition-colors hover:bg-[#FF0000]"
+                className="rounded-2xl bg-white px-4 py-3 text-left font-black text-gray-900 transition-colors hover:bg-[#FF0000] hover:text-white"
               >
                 Login
               </button>

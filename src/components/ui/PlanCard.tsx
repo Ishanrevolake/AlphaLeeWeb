@@ -25,10 +25,10 @@ export const PlanCard: React.FC<PlanCardProps> = ({
       whileHover={{ y: -8, scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
-      className={`relative cursor-pointer rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-8 transition-all duration-500 bg-white ${
-        isSelected ? 'border-2 border-[#FF0000] shadow-[0_20px_50px_rgba(255,0,0,0.15)] outline-none ring-1 ring-[#FF0000]/30 ring-offset-4' 
-        : isPopular ? 'border-2 border-[#FF0000]/30 shadow-[0_10px_40px_rgba(0,0,0,0.04)] hover:shadow-2xl'
-        : 'border-2 border-transparent shadow-[0_10px_40px_rgba(0,0,0,0.03)] hover:shadow-2xl'
+      className={`relative cursor-pointer rounded-3xl lg:rounded-[2.5rem] p-6 sm:p-8 transition-all duration-500 bg-white alpha-panel-shadow ${
+        isSelected ? 'border-2 border-[#FF0000] outline-none ring-1 ring-[#FF0000]/30 ring-offset-4' 
+        : isPopular ? 'border-2 border-[#FF0000]'
+        : 'border-2 border-gray-900'
       }`}
     >
       {isPopular && (

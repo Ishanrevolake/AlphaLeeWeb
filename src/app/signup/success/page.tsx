@@ -112,26 +112,26 @@ export default function SuccessPage() {
         </p>
 
         <div className="mx-auto mb-10 grid max-w-xl gap-3 rounded-3xl border border-gray-100 bg-[#F9F8F4] p-5 text-left sm:p-6">
-          <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
+          <div className="flex flex-col gap-1 rounded-2xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <span className="text-[12px] font-black uppercase tracking-[0.16em] text-gray-400">Reference</span>
-            <span className="font-black text-gray-900">{reference}</span>
+            <span className="break-all font-black text-gray-900">{reference}</span>
           </div>
-          <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
+          <div className="flex flex-col gap-1 rounded-2xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <span className="text-[12px] font-black uppercase tracking-[0.16em] text-gray-400">Status</span>
             <span className="font-black capitalize text-gray-900">{status.replace('_', ' ')}</span>
           </div>
-          <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
+          <div className="flex flex-col gap-1 rounded-2xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
             <span className="text-[12px] font-black uppercase tracking-[0.16em] text-gray-400">Method</span>
             <span className="font-black capitalize text-gray-900">{method} transfer</span>
           </div>
           {slipName && (
-            <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
+            <div className="flex flex-col gap-1 rounded-2xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <span className="text-[12px] font-black uppercase tracking-[0.16em] text-gray-400">Slip</span>
-              <span className="max-w-[55%] truncate font-black text-gray-900">{slipName}</span>
+              <span className="min-w-0 max-w-full truncate font-black text-gray-900 sm:max-w-[55%]">{slipName}</span>
             </div>
           )}
           {payment?.verified_at && (
-            <div className="flex items-center justify-between gap-4 rounded-2xl bg-white p-4">
+            <div className="flex flex-col gap-1 rounded-2xl bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
               <span className="text-[12px] font-black uppercase tracking-[0.16em] text-gray-400">Verified</span>
               <span className="font-black text-gray-900">{new Date(payment.verified_at).toLocaleString()}</span>
             </div>

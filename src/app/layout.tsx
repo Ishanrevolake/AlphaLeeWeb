@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistDisplay.variable} font-sans bg-[#F9F8F4] text-gray-900 selection:bg-[#FF0000]/30 overflow-x-hidden`}>
+      <body className={`${geistSans.variable} ${geistDisplay.variable} sharp-edge font-sans bg-[#F9F8F4] text-gray-900 selection:bg-[#FF0000]/30 overflow-x-hidden`}>
         <div className="flex min-h-screen flex-col overflow-x-hidden">
           <Header />
           <main className="flex-1 flex justify-center w-full min-w-0">
