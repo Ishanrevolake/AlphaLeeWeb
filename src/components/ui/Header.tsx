@@ -9,7 +9,7 @@ import { AlertCircle, Eye, EyeOff, LayoutDashboard, Lock, LogIn, LogOut, Menu, U
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { supabase } from "@/lib/supabase";
-import { getLatestPayment } from "@/lib/clientAccess";
+import { getLatestAskAlphaOrder, getLatestPayment, hasVerifiedAskAlphaOrder } from "@/lib/clientAccess";
 
 export function Header() {
   const pathname = usePathname();
@@ -25,7 +25,8 @@ export function Header() {
   const [isPendingModalOpen, setIsPendingModalOpen] = useState(false);
 
   const links = [
-    { href: "/process-details", label: "Process Details" },
+    { href: "/packages", label: "Programmes" },
+    { href: "/ask-alpha", label: "Ask Alpha" },
     { href: "/recipe-book", label: "Recipe Book" },
     { href: "/blog", label: "Blog" },
     { href: "/testimonials", label: "Testimonials" },
@@ -83,11 +84,29 @@ export function Header() {
     }
 
     const userId = data.user?.id;
-    const latestPayment = userId ? await getLatestPayment(userId) : null;
+    const [latestPayment, latestAskAlphaOrder] = userId
+      ? await Promise.all([getLatestPayment(userId), getLatestAskAlphaOrder(userId)])
+      : [null, null];
     setIsLoggingIn(false);
     setIsLoginOpen(false);
     setUserId(userId || null);
-    router.push(latestPayment ? "/signup/success" : "/packages");
+
+    if (
+      latestPayment?.status === "pending_verification" ||
+      latestPayment?.status === "rejected" ||
+      latestAskAlphaOrder?.status === "pending_verification" ||
+      latestAskAlphaOrder?.status === "rejected"
+    ) {
+      router.push("/signup/success");
+      return;
+    }
+
+    if (latestPayment?.status === "verified" || latestAskAlphaOrder?.status === "verified") {
+      router.push("/dashboard");
+      return;
+    }
+
+    router.push("/packages");
   };
 
   const signOut = async () => {
@@ -105,12 +124,26 @@ export function Header() {
     }
 
     setIsCheckingDashboard(true);
-    const latestPayment = await getLatestPayment(userId);
+    const [latestPayment, latestAskAlphaOrder, askAlphaAccess] = await Promise.all([
+      getLatestPayment(userId),
+      getLatestAskAlphaOrder(userId),
+      hasVerifiedAskAlphaOrder(userId),
+    ]);
     setIsCheckingDashboard(false);
     setIsProfileOpen(false);
     setIsOpen(false);
 
-    if (latestPayment?.status === "verified") {
+    if (
+      latestPayment?.status === "pending_verification" ||
+      latestPayment?.status === "rejected" ||
+      latestAskAlphaOrder?.status === "pending_verification" ||
+      latestAskAlphaOrder?.status === "rejected"
+    ) {
+      router.push("/signup/success");
+      return;
+    }
+
+    if (latestPayment?.status === "verified" || askAlphaAccess) {
       router.push("/dashboard");
       return;
     }

@@ -44,6 +44,14 @@ body {
     box-shadow: 5px 6px 0 #0a0a0a !important;
   }
 
+  .alpha-hero-red-shadow {
+    box-shadow: 5px 8px 0 rgba(255, 0, 0, 0.18) !important;
+  }
+
+  .alpha-hero-white-shadow {
+    box-shadow: 5px 8px 0 rgba(255, 255, 255, 0.18) !important;
+  }
+
   .alpha-panel-shadow {
     box-shadow: 8px 8px 0 #0a0a0a !important;
   }

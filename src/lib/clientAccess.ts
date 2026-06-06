@@ -13,6 +13,19 @@ export type LatestPayment = {
   rejection_reason: string | null;
 };
 
+export type LatestAskAlphaOrder = {
+  id: string;
+  reference: string;
+  product_title: string;
+  amount_lkr: number;
+  question_credits: number;
+  status: PaymentStatus;
+  slip_file_name: string | null;
+  submitted_at: string;
+  verified_at: string | null;
+  rejection_reason: string | null;
+};
+
 export async function hasVerifiedPayment(userId: string) {
   const { data, error } = await supabase
     .from('payments')
@@ -26,6 +39,30 @@ export async function hasVerifiedPayment(userId: string) {
   }
 
   return Boolean(data?.length);
+}
+
+export async function hasVerifiedAskAlphaOrder(userId: string) {
+  const { data, error } = await supabase
+    .from('ask_alpha_orders')
+    .select('id')
+    .eq('user_id', userId)
+    .eq('status', 'verified')
+    .limit(1);
+
+  if (error) {
+    return false;
+  }
+
+  return Boolean(data?.length);
+}
+
+export async function hasAnyDashboardAccess(userId: string) {
+  const [hasProgrammeAccess, hasAskAlphaAccess] = await Promise.all([
+    hasVerifiedPayment(userId),
+    hasVerifiedAskAlphaOrder(userId),
+  ]);
+
+  return hasProgrammeAccess || hasAskAlphaAccess;
 }
 
 export async function getLatestPayment(userId: string): Promise<LatestPayment | null> {
@@ -42,4 +79,20 @@ export async function getLatestPayment(userId: string): Promise<LatestPayment | 
   }
 
   return data as LatestPayment;
+}
+
+export async function getLatestAskAlphaOrder(userId: string): Promise<LatestAskAlphaOrder | null> {
+  const { data, error } = await supabase
+    .from('ask_alpha_orders')
+    .select('id, reference, product_title, amount_lkr, question_credits, status, slip_file_name, submitted_at, verified_at, rejection_reason')
+    .eq('user_id', userId)
+    .order('submitted_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) {
+    return null;
+  }
+
+  return data as LatestAskAlphaOrder;
 }

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { CheckCircle2, ExternalLink, Eye, EyeOff, Lock, LogOut, RefreshCw, XCircle } from "lucide-react";
+import { CheckCircle2, ExternalLink, Eye, EyeOff, Lock, LogOut, MessageCircle, RefreshCw, XCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { supabase } from "@/lib/supabase";
@@ -47,6 +47,33 @@ type PaymentRecord = {
   signedSlipUrl?: string;
 };
 
+type AskAlphaOrderRecord = {
+  id: string;
+  reference: string;
+  product_title: string;
+  question_credits: number;
+  amount_lkr: number;
+  status: PaymentStatus;
+  submitted_at: string;
+  verified_at: string | null;
+  rejection_reason: string | null;
+  slip_file_name: string | null;
+  slip_storage_path: string | null;
+  profiles:
+    | {
+        full_name: string | null;
+        email: string | null;
+        phone: string | null;
+      }
+    | Array<{
+        full_name: string | null;
+        email: string | null;
+        phone: string | null;
+      }>
+    | null;
+  signedSlipUrl?: string;
+};
+
 type AccessState = "checking" | "login" | "denied" | "ready";
 
 const statusStyles: Record<PaymentStatus, string> = {
@@ -64,6 +91,7 @@ const statusLabels: Record<PaymentStatus, string> = {
 export default function CoachPaymentsPage() {
   const [accessState, setAccessState] = useState<AccessState>("checking");
   const [payments, setPayments] = useState<PaymentRecord[]>([]);
+  const [askAlphaOrders, setAskAlphaOrders] = useState<AskAlphaOrderRecord[]>([]);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activePaymentId, setActivePaymentId] = useState("");
@@ -145,6 +173,51 @@ export default function CoachPaymentsPage() {
     );
 
     setPayments(withSlipUrls);
+
+    const { data: askAlphaData, error: askAlphaError } = await supabase
+      .from("ask_alpha_orders")
+      .select(
+        `
+        id,
+        reference,
+        product_title,
+        question_credits,
+        amount_lkr,
+        status,
+        submitted_at,
+        verified_at,
+        rejection_reason,
+        slip_file_name,
+        slip_storage_path,
+        profiles:user_id (
+          full_name,
+          email,
+          phone
+        )
+      `,
+      )
+      .order("submitted_at", { ascending: false });
+
+    if (!askAlphaError) {
+      const askRecords = (askAlphaData || []) as AskAlphaOrderRecord[];
+      const askWithSlipUrls = await Promise.all(
+        askRecords.map(async (order) => {
+          if (!order.slip_storage_path) return order;
+
+          const { data: signedSlip } = await supabase.storage
+            .from("payment-slips")
+            .createSignedUrl(order.slip_storage_path, 60 * 15);
+
+          return {
+            ...order,
+            signedSlipUrl: signedSlip?.signedUrl,
+          };
+        }),
+      );
+
+      setAskAlphaOrders(askWithSlipUrls);
+    }
+
     setAccessState("ready");
     setIsLoading(false);
   };
@@ -200,6 +273,45 @@ export default function CoachPaymentsPage() {
           };
 
     const { error } = await supabase.from("payments").update(patch).eq("id", paymentId);
+
+    if (error) {
+      setMessage(error.message);
+      setActivePaymentId("");
+      return;
+    }
+
+    await loadPayments();
+    setActivePaymentId("");
+  };
+
+  const updateAskAlphaStatus = async (orderId: string, status: PaymentStatus, rejectionReason?: string) => {
+    const { data: userData } = await supabase.auth.getUser();
+    const user = userData.user;
+
+    if (!user) {
+      setAccessState("login");
+      return;
+    }
+
+    setActivePaymentId(orderId);
+    setMessage("");
+
+    const patch =
+      status === "verified"
+        ? {
+            status,
+            verified_at: new Date().toISOString(),
+            verified_by: user.id,
+            rejection_reason: null,
+          }
+        : {
+            status,
+            verified_at: null,
+            verified_by: null,
+            rejection_reason: rejectionReason || "Ask Alpha payment could not be verified.",
+          };
+
+    const { error } = await supabase.from("ask_alpha_orders").update(patch).eq("id", orderId);
 
     if (error) {
       setMessage(error.message);
@@ -308,6 +420,13 @@ export default function CoachPaymentsPage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
+            <Link
+              href="/coach/ask-alpha"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-full border-2 border-gray-900 bg-white px-5 text-sm font-black uppercase tracking-[0.08em] text-gray-900 alpha-black-block-shadow transition-colors hover:bg-gray-50"
+            >
+              <MessageCircle size={16} />
+              Ask Alpha Inbox
+            </Link>
             <Button type="button" variant="secondary" onClick={loadPayments} isLoading={isLoading} className="h-12 gap-2 rounded-full px-5">
               <RefreshCw size={16} />
               Refresh
@@ -410,6 +529,104 @@ export default function CoachPaymentsPage() {
               </p>
             </div>
           )}
+        </div>
+
+        <div className="mt-10">
+          <div className="mb-5">
+            <div className="mb-2 text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000]">Paid Q&A</div>
+            <h2 className="font-outfit text-3xl font-black tracking-tight text-gray-900">Ask Alpha Payments</h2>
+            <p className="mt-2 text-sm font-semibold leading-relaxed text-gray-600">
+              Verified Ask Alpha payments unlock question credits in the client dashboard.
+            </p>
+          </div>
+
+          <div className="space-y-4">
+            {askAlphaOrders.length ? (
+              askAlphaOrders.map((order) => {
+                const profile = Array.isArray(order.profiles) ? order.profiles[0] : order.profiles;
+
+                return (
+                  <article key={order.id} className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+                    <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+                      <div className="min-w-0">
+                        <div className="flex flex-wrap items-center gap-3">
+                          <h3 className="font-outfit text-2xl font-black tracking-tight text-gray-900">
+                            {profile?.full_name || "Client"}
+                          </h3>
+                          <span className={`rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] ring-1 ${statusStyles[order.status]}`}>
+                            {statusLabels[order.status]}
+                          </span>
+                        </div>
+                        <div className="mt-2 break-words text-sm font-semibold text-gray-500">
+                          {profile?.email || "No email"} | {profile?.phone || "No phone"}
+                        </div>
+                        <div className="mt-4 grid gap-3 text-sm font-bold text-gray-700 sm:grid-cols-2 lg:grid-cols-4">
+                          <Info label="Reference" value={order.reference} />
+                          <Info label="Amount" value={`Rs. ${Number(order.amount_lkr || 0).toLocaleString("en-US")}`} />
+                          <Info label="Product" value={order.product_title || "Ask Alpha"} />
+                          <Info label="Credits" value={String(order.question_credits || 0)} />
+                        </div>
+                        {order.rejection_reason && (
+                          <div className="mt-4 rounded-2xl border border-red-100 bg-red-50 p-3 text-sm font-bold text-red-700">
+                            {order.rejection_reason}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="flex shrink-0 flex-col gap-3 sm:flex-row sm:flex-wrap lg:justify-end">
+                        {order.signedSlipUrl ? (
+                          <Link
+                            href={order.signedSlipUrl}
+                            target="_blank"
+                            className="inline-flex h-12 w-full items-center justify-center gap-2 rounded-full border border-gray-200 bg-white px-5 text-sm font-black text-gray-700 shadow-sm transition-colors hover:text-[#FF0000] sm:w-auto"
+                          >
+                            <ExternalLink size={16} />
+                            Open slip
+                          </Link>
+                        ) : (
+                          <span className="inline-flex h-12 w-full items-center justify-center rounded-full border border-gray-200 bg-gray-50 px-5 text-sm font-black text-gray-400 sm:w-auto">
+                            No slip
+                          </span>
+                        )}
+                        <Button
+                          type="button"
+                          onClick={() => updateAskAlphaStatus(order.id, "verified")}
+                          isLoading={activePaymentId === order.id}
+                          disabled={order.status === "verified"}
+                          className="h-12 w-full gap-2 rounded-full bg-emerald-600 px-5 text-white shadow-none hover:bg-emerald-700 sm:w-auto"
+                        >
+                          <CheckCircle2 size={16} />
+                          Verify
+                        </Button>
+                        <Button
+                          type="button"
+                          variant="secondary"
+                          onClick={() => {
+                            const reason = window.prompt("Reason for rejection?", "Ask Alpha payment slip could not be verified.");
+                            if (reason !== null) {
+                              updateAskAlphaStatus(order.id, "rejected", reason);
+                            }
+                          }}
+                          disabled={order.status === "rejected"}
+                          className="h-12 w-full gap-2 rounded-full px-5 text-red-600 sm:w-auto"
+                        >
+                          <XCircle size={16} />
+                          Reject
+                        </Button>
+                      </div>
+                    </div>
+                  </article>
+                );
+              })
+            ) : (
+              <div className="rounded-3xl border border-dashed border-gray-200 bg-white p-8 text-center shadow-sm">
+                <div className="font-black text-gray-900">No Ask Alpha submissions yet</div>
+                <p className="mx-auto mt-2 max-w-sm text-sm font-semibold leading-relaxed text-gray-500">
+                  New paid Q&A bank-transfer submissions will appear here.
+                </p>
+              </div>
+            )}
+          </div>
         </div>
       </motion.div>
     </div>

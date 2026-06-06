@@ -17,20 +17,10 @@ export default function LandingPage() {
     transition: { duration: 0.6 }
   };
 
-  const youtubeVideos = [
-    {
-      title: "Latest Coaching Video",
-      embedUrl: "https://www.youtube.com/embed/videoseries?list=UUqWnR5ZcahbpQq78szOwnpA&index=1"
-    },
-    {
-      title: "Training Insights",
-      embedUrl: "https://www.youtube.com/embed/videoseries?list=UUqWnR5ZcahbpQq78szOwnpA&index=2"
-    },
-    {
-      title: "Nutrition Guidance",
-      embedUrl: "https://www.youtube.com/embed/videoseries?list=UUqWnR5ZcahbpQq78szOwnpA&index=3"
-    }
-  ];
+  const latestYoutubeVideo = {
+    title: "Latest Coaching Video",
+    embedUrl: "https://www.youtube.com/embed/videoseries?list=UUqWnR5ZcahbpQq78szOwnpA"
+  };
 
   return (
     <div className="flex flex-col flex-1 bg-white">
@@ -68,9 +58,18 @@ export default function LandingPage() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col items-center justify-center gap-4 sm:flex-row"
           >
-            <Button onClick={() => router.push("/packages")} size="lg" className="w-full text-base sm:w-auto sm:text-lg py-4 px-7 sm:px-8 shadow-2xl shadow-primary/40 rounded-full font-black">
-              View Rates & Details
+            <Button onClick={() => router.push("/packages")} size="lg" className="w-full text-sm sm:w-auto sm:text-base py-4 px-7 sm:px-8 rounded-full font-black alpha-hero-red-shadow">
+              Find Your Programme
+            </Button>
+            <Button
+              onClick={() => router.push("/process-details")}
+              variant="secondary"
+              size="lg"
+              className="w-full bg-white text-sm text-gray-900 hover:bg-gray-100 sm:w-auto sm:text-base py-4 px-7 sm:px-8 rounded-full font-black alpha-hero-white-shadow"
+            >
+              Process Details
             </Button>
           </motion.div>
         </div>
@@ -129,6 +128,43 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Ask Alpha Section */}
+      <section className="bg-white px-4 py-16 sm:px-6 sm:py-20">
+        <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <div>
+            <div className="mb-4 text-[12px] font-black uppercase tracking-[0.22em] text-[#FF0000]">Paid Q&A</div>
+            <h2 className="font-outfit text-4xl font-black tracking-tight text-gray-900 lg:text-5xl">
+              Ask <span className="text-[#FF0000]">Alpha</span>
+            </h2>
+            <p className="mt-5 text-base font-semibold leading-relaxed text-gray-600 sm:text-lg">
+              Have a focused training, nutrition, or technique question? Buy a question credit, upload your payment slip, and get your answer inside the client dashboard.
+            </p>
+          </div>
+          <div className="rounded-3xl border-2 border-gray-900 bg-[#F9F8F4] p-5 alpha-panel-shadow sm:p-6">
+            <div className="grid gap-4 sm:grid-cols-3">
+              {[
+                { title: "1 Question", text: "One focused answer" },
+                { title: "3 Pack", text: "Save on follow-ups" },
+                { title: "Form Review", text: "Video technique feedback" },
+              ].map((item) => (
+                <div key={item.title} className="rounded-2xl bg-white p-4">
+                  <div className="font-outfit text-lg font-black tracking-tight text-gray-900">{item.title}</div>
+                  <p className="mt-2 text-sm font-bold leading-relaxed text-gray-500">{item.text}</p>
+                </div>
+              ))}
+            </div>
+            <Button
+              type="button"
+              onClick={() => router.push("/ask-alpha")}
+              size="lg"
+              className="mt-6 h-13 w-full rounded-full bg-gray-900 text-white hover:bg-[#FF0000]"
+            >
+              Buy Question Credits
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Video Gallery Section */}
       <section className="py-14 sm:py-20 px-4 sm:px-6 bg-gray-950 text-white border-y border-gray-900">
         <div className="max-w-6xl mx-auto">
@@ -141,30 +177,27 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="grid gap-5 md:grid-cols-3">
-            {youtubeVideos.map((video) => (
-              <motion.article
-                key={video.title}
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45 }}
-                className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-[0_20px_60px_rgba(0,0,0,0.22)]"
-              >
-                <div className="aspect-video bg-black">
-                  <iframe
-                    src={video.embedUrl}
-                    title={video.title}
-                    className="h-full w-full"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                    allowFullScreen
-                  />
-                </div>
-                <div className="p-5">
-                  <h3 className="font-outfit text-xl font-black tracking-tight">{video.title}</h3>
-                </div>
-              </motion.article>
-            ))}
+          <div className="mx-auto max-w-3xl">
+            <motion.article
+              initial={{ opacity: 0, y: 18 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.45 }}
+              className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.04] shadow-[0_20px_60px_rgba(0,0,0,0.22)]"
+            >
+              <div className="aspect-video bg-black">
+                <iframe
+                  src={latestYoutubeVideo.embedUrl}
+                  title={latestYoutubeVideo.title}
+                  className="h-full w-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                />
+              </div>
+              <div className="p-5">
+                <h3 className="font-outfit text-xl font-black tracking-tight">{latestYoutubeVideo.title}</h3>
+              </div>
+            </motion.article>
           </div>
         </div>
       </section>
