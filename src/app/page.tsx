@@ -8,6 +8,7 @@ import Image from "next/image";
 import bgNew1 from "@/assets/bgnew1.png";
 
 import { InterestForm } from "@/components/InterestForm";
+import { TransformationGallery } from "@/components/TransformationGallery";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -204,6 +205,13 @@ export default function LandingPage() {
 
       {/* Interest Form Section */}
       <InterestForm />
+
+      {/* Transformation Gallery Section */}
+      <section className="overflow-hidden bg-[#F9F8F4] px-4 py-16 sm:px-6 sm:py-24">
+        <div className="mx-auto max-w-7xl">
+          <TransformationGallery variant="marquee" />
+        </div>
+      </section>
 
       {/* Sticky Mobile CTA Background Spacer */}
       <div className="h-24 md:h-0"></div>
