@@ -11,11 +11,54 @@ export type TestimonialReview = {
   name: string;
   body: string;
   rating: number;
+  imageUrl: string | null;
+  instagramUrl: string | null;
 };
 
 type TestimonialsContentProps = {
   reviews: TestimonialReview[];
 };
+
+function InstagramGlyph() {
+  return (
+    <svg
+      aria-hidden="true"
+      viewBox="0 0 24 24"
+      className="h-[18px] w-[18px]"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.5" cy="6.5" r="0.75" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function normalizeInstagramUrl(url: string | null) {
+  const value = url?.trim();
+
+  if (!value) {
+    return null;
+  }
+
+  if (value.startsWith("@")) {
+    return `https://www.instagram.com/${value.slice(1)}/`;
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    return value;
+  }
+
+  if (/^instagram\.com\//i.test(value) || /^www\.instagram\.com\//i.test(value)) {
+    return `https://${value}`;
+  }
+
+  return `https://www.instagram.com/${value.replace(/^\/+/, "")}`;
+}
 
 export default function TestimonialsContent({ reviews }: TestimonialsContentProps) {
   return (
@@ -42,14 +85,30 @@ export default function TestimonialsContent({ reviews }: TestimonialsContentProp
         {/* Reviews Grid */}
         {reviews.length > 0 ? (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
-            {reviews.map((review, i) => (
-              <motion.div 
-                key={review.id}
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
-                className="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-gray-100 relative group hover:shadow-xl transition-shadow"
-              >
+            {reviews.map((review, i) => {
+              const imageUrl = review.imageUrl?.trim();
+              const instagramHref = normalizeInstagramUrl(review.instagramUrl);
+
+              return (
+                <motion.div 
+                  key={review.id}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.1 }}
+                  className="bg-white overflow-hidden rounded-3xl shadow-sm border border-gray-100 relative group hover:shadow-xl transition-shadow"
+                >
+                  {imageUrl ? (
+                    <div className="aspect-[4/3] bg-gray-100">
+                      <img
+                        src={imageUrl}
+                        alt={`${review.name} testimonial`}
+                        loading="lazy"
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : null}
+
+                <div className="relative p-6 sm:p-8">
                 <div className="absolute top-8 right-8 text-gray-100 group-hover:text-[#cca751]/10 transition-colors">
                   <Quote size={48} className="text-gray-100 group-hover:text-[#FF0000]/10 transition-colors" />
                 </div>
@@ -69,12 +128,26 @@ export default function TestimonialsContent({ reviews }: TestimonialsContentProp
                     <div className="font-bold text-gray-900">{review.name}</div>
                     <div className="text-sm font-medium text-gray-500">Verified Client</div>
                   </div>
-                  <div className="bg-gray-100 text-gray-600 text-xs font-bold px-3 py-1 rounded-full">
-                    Approved
-                  </div>
+                  {instagramHref ? (
+                    <a
+                      href={instagramHref}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`Open ${review.name}'s Instagram profile`}
+                      className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-gray-700 transition-colors hover:bg-[#FF0000] hover:text-white"
+                    >
+                      <InstagramGlyph />
+                    </a>
+                  ) : (
+                    <div className="bg-gray-100 text-gray-600 text-xs font-bold px-3 py-1 rounded-full">
+                      Approved
+                    </div>
+                  )}
                 </div>
-              </motion.div>
-            ))}
+                </div>
+                </motion.div>
+              );
+            })}
           </div>
         ) : (
           <motion.div
