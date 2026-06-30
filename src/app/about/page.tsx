@@ -8,6 +8,24 @@ import { useRouter } from "next/navigation";
 import headCoachImage from "../../assets/head-coach.jpeg";
 import documentationAdministrator from "@/assets/documentation-administrator.jpg";
 
+function InstagramIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[21px] w-[21px]" fill="none">
+      <rect x="3" y="3" width="18" height="18" rx="5" stroke="currentColor" strokeWidth="2" />
+      <circle cx="12" cy="12" r="4" stroke="currentColor" strokeWidth="2" />
+      <circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" />
+    </svg>
+  );
+}
+
+function YoutubeIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-[22px] w-[22px]" fill="currentColor">
+      <path d="M21.6 7.2a3 3 0 0 0-2.1-2.1C17.7 4.6 12 4.6 12 4.6s-5.7 0-7.5.5a3 3 0 0 0-2.1 2.1A31 31 0 0 0 2 12a31 31 0 0 0 .4 4.8 3 3 0 0 0 2.1 2.1c1.8.5 7.5.5 7.5.5s5.7 0 7.5-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 22 12a31 31 0 0 0-.4-4.8ZM10 15.4V8.6l5.8 3.4L10 15.4Z" />
+    </svg>
+  );
+}
+
 const values = [
   {
     title: "Evidence-Based Practices",
@@ -41,11 +59,19 @@ const team = [
     name: "Lalitha Epaarachchi",
     role: "Head Coach",
     image: headCoachImage,
+    socials: {
+      youtube: "https://www.youtube.com/@AlphaLeeFitness",
+      instagram: "https://www.instagram.com/lalitha_epaarachchi?igsh=MWI3czMxaG84OGJiZQ==",
+    },
   },
   {
     name: "Monali Nawarathna",
     role: "Documentation Administrator",
     image: documentationAdministrator,
+    socials: {
+      youtube: "",
+      instagram: "",
+    },
   },
 ];
 
@@ -263,6 +289,44 @@ export default function AboutPage() {
                 <div className="p-7 text-center sm:p-8">
                   <h3 className="font-outfit text-2xl font-black tracking-tight text-gray-900">{member.name}</h3>
                   <p className="mt-3 text-sm font-black uppercase tracking-[0.18em] text-gray-500">{member.role}</p>
+                  <div className="mt-5 flex justify-center gap-3">
+                    {member.socials.instagram ? (
+                      <a
+                        href={member.socials.instagram}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${member.name} on Instagram`}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-900 transition-colors hover:border-[#FF0000] hover:bg-[#FF0000] hover:text-white"
+                      >
+                        <InstagramIcon />
+                      </a>
+                    ) : (
+                      <span
+                        aria-label={`${member.name} Instagram link unavailable`}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-gray-300"
+                      >
+                        <InstagramIcon />
+                      </span>
+                    )}
+                    {member.socials.youtube ? (
+                      <a
+                        href={member.socials.youtube}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`${member.name} on YouTube`}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-900 transition-colors hover:border-[#FF0000] hover:bg-[#FF0000] hover:text-white"
+                      >
+                        <YoutubeIcon />
+                      </a>
+                    ) : (
+                      <span
+                        aria-label={`${member.name} YouTube link unavailable`}
+                        className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-gray-300"
+                      >
+                        <YoutubeIcon />
+                      </span>
+                    )}
+                  </div>
                 </div>
               </article>
             ))}
