@@ -9,7 +9,7 @@ export default async function BlogPage() {
 
   return (
     <div className="bg-[#F9F8F4] px-4 py-10 sm:px-6 sm:py-14 lg:py-16">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-7xl">
         <header className="mb-8 sm:mb-10">
           <p className="mb-4 text-sm font-black uppercase tracking-[0.22em] text-[#FF0000]">
             Fitness Blog
@@ -25,14 +25,14 @@ export default async function BlogPage() {
         </header>
 
         {posts.length > 0 ? (
-          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-7">
             {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="group flex min-h-[430px] flex-col overflow-hidden rounded-[1.25rem] bg-white shadow-[0_10px_36px_rgba(0,0,0,0.06)] transition-transform duration-300 hover:-translate-y-1"
+                className="group flex min-h-[360px] flex-col overflow-hidden rounded-[1.25rem] bg-white shadow-[0_10px_36px_rgba(0,0,0,0.06)] transition-transform duration-300 hover:-translate-y-1"
               >
-                <div className="aspect-[16/10] bg-gray-900">
+                <div className="aspect-[16/8.5] bg-gray-900">
                   {post.cover_image_url ? (
                     <img
                       src={post.cover_image_url}
@@ -45,23 +45,23 @@ export default async function BlogPage() {
                     </div>
                   )}
                 </div>
-                <div className="flex flex-1 flex-col p-6">
-                  <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500">
+                <div className="flex flex-1 flex-col p-6 sm:p-7">
+                  <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px] font-black uppercase tracking-[0.16em] text-gray-500">
                     {post.category ? <span>{post.category}</span> : null}
                     <span>{getPostDate(post)}</span>
                     <span>{getReadingTime(post.content)}</span>
                   </div>
-                  <h2 className="mb-3 font-outfit text-2xl font-black leading-tight tracking-tight text-gray-900">
+                  <h2 className="mb-3 font-outfit text-[1.55rem] font-black leading-tight tracking-tight text-gray-900">
                     {post.title}
                   </h2>
                   {post.excerpt ? (
-                    <p className="line-clamp-4 text-sm font-medium leading-relaxed text-gray-600">
+                    <p className="line-clamp-3 text-sm font-medium leading-relaxed text-gray-600">
                       {post.excerpt}
                     </p>
                   ) : null}
-                  <div className="mt-auto flex items-center gap-2 pt-6 text-xs font-black uppercase tracking-[0.16em] text-[#FF0000]">
+                  <div className="mt-auto flex items-center gap-2.5 pt-5 text-sm font-black uppercase tracking-[0.16em] text-[#FF0000]">
                     Read post
-                    <ArrowUpRight size={16} strokeWidth={3} />
+                    <ArrowUpRight size={18} strokeWidth={3} />
                   </div>
                 </div>
               </Link>
