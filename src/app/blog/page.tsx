@@ -25,14 +25,14 @@ export default async function BlogPage() {
         </header>
 
         {posts.length > 0 ? (
-          <section className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:gap-7">
+          <section className="grid gap-6 sm:grid-cols-2 xl:gap-7">
             {posts.map((post) => (
               <Link
                 key={post.id}
                 href={`/blog/${post.slug}`}
-                className="group flex min-h-[360px] flex-col overflow-hidden rounded-[1.25rem] bg-white shadow-[0_10px_36px_rgba(0,0,0,0.06)] transition-transform duration-300 hover:-translate-y-1"
+                className="group flex min-h-[320px] flex-col overflow-hidden rounded-[1.25rem] bg-white shadow-[0_10px_36px_rgba(0,0,0,0.06)] transition-transform duration-300 hover:-translate-y-1"
               >
-                <div className="aspect-[16/8.5] bg-gray-900">
+                <div className="aspect-[16/7] bg-gray-900">
                   {post.cover_image_url ? (
                     <img
                       src={post.cover_image_url}

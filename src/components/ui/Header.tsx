@@ -157,7 +157,7 @@ export function Header() {
         <Link href="/" className="font-black text-xl sm:text-2xl tracking-tighter text-white hover:text-gray-300 transition-colors" onClick={() => setIsOpen(false)}>
           ALPHA LEE
         </Link>
-        <nav className="hidden lg:flex items-center space-x-1 font-semibold text-[12px] xl:text-[14px] xl:space-x-2 tracking-wide">
+        <nav className="hidden lg:flex items-center space-x-1 font-semibold text-[13px] xl:text-[15px] xl:space-x-2 tracking-wide">
           {links.map((link) => {
             const isActive = pathname === link.href;
             return (
