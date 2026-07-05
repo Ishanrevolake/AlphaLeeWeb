@@ -135,10 +135,10 @@ export default function LandingPage() {
           <div>
             <div className="mb-4 text-[12px] font-black uppercase tracking-[0.22em] text-[#FF0000]">Paid Q&A</div>
             <h2 className="font-outfit text-4xl font-black tracking-tight text-gray-900 lg:text-5xl">
-              Ask <span className="text-[#FF0000]">Alpha</span>
+              Need <span className="text-[#FF0000]">expert advice?</span>
             </h2>
             <p className="mt-5 text-base font-semibold leading-relaxed text-gray-600 sm:text-lg">
-              Have a focused training, nutrition, or technique question? Buy a question credit, upload your payment slip, and get your answer inside the client dashboard.
+              Whether it&apos;s training, nutrition, or technique, ask Alpha and receive personalized guidance tailored to your goals.
             </p>
           </div>
           <div className="rounded-3xl border-2 border-gray-900 bg-[#F9F8F4] p-5 alpha-panel-shadow sm:p-6">

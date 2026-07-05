@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Suspense } from "react";
+import { AnalyticsTracker } from "@/components/AnalyticsTracker";
 import { Header } from "@/components/ui/Header";
 import { Footer } from "@/components/ui/Footer";
 import "./globals.css";
@@ -36,6 +38,9 @@ export default function RootLayout({
           </main>
           <Footer />
         </div>
+        <Suspense fallback={null}>
+          <AnalyticsTracker />
+        </Suspense>
       </body>
     </html>
   );
