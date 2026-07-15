@@ -15,6 +15,8 @@ export type PackageOption = {
   detailSubtitle: string;
   example: string;
   features: string[];
+  suitableFor?: string[];
+  footnote?: string;
 };
 
 export const PACKAGE_CATEGORIES: PackageCategory[] = ['All', 'Bundles', 'Annual', 'Monthly', 'One-Off'];
@@ -171,6 +173,106 @@ export const PACKAGES: PackageOption[] = [
       'Meal options customised to your like and dislikes',
       'Supplementation guide',
       'Not online coaching'
+    ]
+  },
+  {
+    id: 'consult-inperson',
+    category: 'One-Off',
+    letter: 'IC',
+    title: 'In-Person Consultation',
+    subtitle: 'Face-To-Face Fitness Guidance',
+    price: 'Rs. 15,000',
+    footerText: 'Personalised Guidance',
+    detailSubtitle: 'A personalised consultation for clients who prefer direct interaction and coaching.',
+    example: 'Ideal for goals, nutrition, training challenges and plateaus',
+    suitableFor: [
+      'Reviewing your current training approach',
+      'Discussing fitness goals',
+      'Getting guidance on training and nutrition',
+      'Addressing challenges or plateaus'
+    ],
+    features: [
+      'One-on-one consultation',
+      'Personalised recommendations',
+      'Training and nutrition guidance',
+      'Clear next steps based on your goals'
+    ]
+  },
+  {
+    id: 'consult-online',
+    category: 'One-Off',
+    letter: 'OC',
+    title: 'Online Consultation',
+    subtitle: 'Expert Guidance From Anywhere',
+    price: 'Rs. 10,500',
+    footerText: 'Personalised Guidance',
+    detailSubtitle: 'A convenient option for personalised advice through an online consultation.',
+    example: 'Ideal for training, nutrition, goal setting and progress reviews',
+    suitableFor: [
+      'Training guidance',
+      'Nutrition questions',
+      'Goal setting',
+      'Reviewing progress',
+      'Troubleshooting your current approach'
+    ],
+    features: [
+      'One-on-one online consultation',
+      'Personalised recommendations',
+      'Training and nutrition guidance',
+      'Actionable steps to move forward'
+    ]
+  },
+  {
+    id: 'programme-review',
+    category: 'One-Off',
+    letter: 'PR',
+    title: 'Training Programme Review',
+    subtitle: 'Programme Assessment',
+    price: 'Rs. 5,500',
+    footerText: 'Professional Assessment',
+    detailSubtitle: 'Get expert feedback on your current workout programme without needing a completely new programme.',
+    example: 'Find out whether your programme is structured correctly',
+    footnote: 'Ideal for anyone who wants expert feedback without needing a completely new programme.',
+    features: [
+      'Exercise selection review',
+      'Training volume assessment',
+      'Training frequency review',
+      'Programme structure analysis',
+      'Progression recommendations',
+      'Areas for improvement'
+    ]
+  },
+  {
+    id: 'technique-single',
+    category: 'One-Off',
+    letter: 'SR',
+    title: 'Single Exercise Review',
+    subtitle: 'Review One Exercise',
+    price: 'Rs. 2,500',
+    footerText: 'Video Technique Review',
+    detailSubtitle: 'Perfect if you need professional feedback on one specific movement.',
+    example: 'Focused technique feedback for one exercise',
+    features: [
+      'Video technique assessment',
+      'Feedback on execution',
+      'Key corrections and recommendations'
+    ]
+  },
+  {
+    id: 'technique-full',
+    category: 'One-Off',
+    letter: 'FR',
+    title: 'Full Technique Review',
+    subtitle: 'Review Up To 10 Exercises',
+    price: 'Rs. 7,500',
+    footerText: 'Complete Technique Review',
+    detailSubtitle: 'Ideal for a more complete assessment of your training technique.',
+    example: 'Professional feedback for up to 10 exercises',
+    features: [
+      'Review of up to 10 exercises',
+      'Technique feedback for each movement',
+      'Corrections and coaching cues',
+      'Recommendations to improve performance and safety'
     ]
   }
 ];

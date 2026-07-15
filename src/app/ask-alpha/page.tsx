@@ -244,17 +244,17 @@ export default function AskAlphaPage() {
           transition={{ duration: 0.4 }}
         >
           <div className="mb-4 text-[12px] font-black uppercase tracking-[0.24em] text-[#FF0000]">Paid Q&A</div>
-          <h1 className="font-outfit text-[clamp(2.5rem,11vw,5.4rem)] font-black leading-none tracking-tight text-gray-900">
-            Ask <span className="text-[#FF0000]">Alpha</span>
+          <h1 className="font-outfit text-[clamp(2rem,8vw,4rem)] font-black uppercase leading-none tracking-tight text-gray-900">
+            NEED <span className="text-[#FF0000]">EXPERT</span> ADVICE?
           </h1>
           <p className="mx-auto mt-5 max-w-3xl text-base font-semibold leading-relaxed text-gray-600 sm:text-lg">
-            Pay for focused fitness, nutrition, or technique questions and get your answer inside the client dashboard. One credit covers one focused question.
+            Have a specific question but don&apos;t need a full consultation? Purchase question credits and receive focused answers about training, nutrition, progress, and fitness.
           </p>
         </motion.div>
 
         <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
           <section className="space-y-6">
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2">
               {ASK_ALPHA_OFFERS.map((offer) => {
                 const isSelected = selectedOfferId === offer.id;
 
@@ -296,9 +296,9 @@ export default function AskAlphaPage() {
                   <AlertCircle size={22} />
                 </div>
                 <div>
-                  <h2 className="font-outfit text-xl font-black tracking-tight text-gray-900">Clear scope keeps replies useful</h2>
+                  <h2 className="font-outfit text-xl font-black tracking-tight text-gray-900">Ask Alpha is best for focused guidance</h2>
                   <p className="mt-2 text-sm font-semibold leading-relaxed text-gray-600">
-                    Ask Alpha is for focused questions and clarifications. Full training programmes, complete diet plans, medical advice, and ongoing coaching support are not included in a single question credit.
+                    Use it for training questions, nutrition clarification, exercise selection, progress troubleshooting, and general fitness guidance. Complete training programmes, full diet plans, medical advice, and ongoing coaching support are not included. Credits are valid for 30 days from purchase.
                   </p>
                 </div>
               </div>

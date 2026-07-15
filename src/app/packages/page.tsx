@@ -3,11 +3,43 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { Check, Circle, X } from 'lucide-react';
 import { useFunnelStore } from '@/store/funnelStore';
 import { PlanCard } from '@/components/ui/PlanCard';
 import { PACKAGES, PACKAGE_CATEGORIES, type PackageCategory } from '@/lib/packages';
 import { supabase } from '@/lib/supabase';
+
+const SERVICE_IDS = new Set([
+  'consult-inperson',
+  'consult-online',
+  'programme-review',
+  'technique-single',
+  'technique-full',
+]);
+
+const SERVICE_SECTIONS = [
+  {
+    id: 'consultations',
+    eyebrow: 'Consultations',
+    title: 'One-On-One Fitness Consultations',
+    description: 'Need personalised guidance or want to discuss multiple aspects of your fitness journey? A consultation gives you dedicated time to discuss your goals, challenges, and questions while receiving recommendations specific to your situation. Choose between online or in-person support.',
+    packageIds: ['consult-inperson', 'consult-online'],
+  },
+  {
+    id: 'programme-review-section',
+    eyebrow: 'Training Programme Review',
+    title: 'Get Your Training Programme Professionally Assessed',
+    description: 'Already have a workout programme but want to know if it is structured correctly? Receive feedback on your current programme with recommendations to help improve your results.',
+    packageIds: ['programme-review'],
+  },
+  {
+    id: 'technique-review',
+    eyebrow: 'Exercise Technique Review',
+    title: 'Improve Your Exercise Technique',
+    description: 'Get professional feedback on your lifting technique through video review. Whether you want to fix a specific movement or have multiple exercises assessed, choose the option that fits your needs.',
+    packageIds: ['technique-single', 'technique-full'],
+  },
+] as const;
 
 export default function PackagesPage() {
   const router = useRouter();
@@ -19,9 +51,11 @@ export default function PackagesPage() {
   useEffect(() => setMounted(true), []);
   if (!mounted) return null;
 
-  const filteredPackages = activeCategory === 'All'
+  const categoryPackages = activeCategory === 'All'
     ? PACKAGES
     : PACKAGES.filter(p => p.category === activeCategory);
+  const filteredPackages = categoryPackages.filter((pkg) => !SERVICE_IDS.has(pkg.id));
+  const showServiceSections = activeCategory === 'All' || activeCategory === 'One-Off';
 
   const startSignupForPackage = async (packageId: string) => {
     setPackage(packageId);
@@ -90,7 +124,7 @@ export default function PackagesPage() {
              </motion.div>
           )}
 
-          <motion.div
+          {filteredPackages.length > 0 && <motion.div
             key={activeCategory}
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -121,7 +155,96 @@ export default function PackagesPage() {
                 }}
               />
             ))}
-          </motion.div>
+          </motion.div>}
+
+          {showServiceSections && (
+            <div className="w-full max-w-[1000px] space-y-16 pb-24">
+              {SERVICE_SECTIONS.map((section) => {
+                const sectionPackages = section.packageIds
+                  .map((packageId) => PACKAGES.find((pkg) => pkg.id === packageId))
+                  .filter((pkg): pkg is (typeof PACKAGES)[number] => Boolean(pkg));
+
+                return (
+                  <motion.section
+                    key={section.id}
+                    id={section.id}
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="scroll-mt-24 text-left"
+                  >
+                    <div className="mb-6 max-w-3xl">
+                      <div className="mb-2 text-xs font-black uppercase tracking-[0.14em] text-[#FF0000]">{section.eyebrow}</div>
+                      <h2 className="font-outfit text-2xl font-black tracking-tight text-gray-900 sm:text-3xl">{section.title}</h2>
+                      <p className="mt-3 text-[15px] font-medium leading-7 text-gray-600 sm:text-base">{section.description}</p>
+                    </div>
+
+                    <div className={`grid gap-5 ${sectionPackages.length > 1 ? 'lg:grid-cols-2' : 'grid-cols-1'}`}>
+                      {sectionPackages.map((pkg) => {
+                        const isSelected = selectedPackage === pkg.id;
+
+                        return (
+                          <article
+                            key={pkg.id}
+                            className={`flex flex-col rounded-xl border bg-white p-6 transition-all sm:p-7 ${isSelected ? 'border-[#FF0000] shadow-[8px_8px_0_#111827]' : 'border-gray-200 hover:border-gray-300'}`}
+                          >
+                            <button type="button" onClick={() => setPackage(pkg.id)} className="w-full text-left">
+                              <div className="flex items-start justify-between gap-4">
+                                <div>
+                                  <div className="text-sm font-bold text-gray-400">{pkg.subtitle}</div>
+                                  <h3 className="mt-1 font-outfit text-xl font-black tracking-tight text-gray-950 sm:text-2xl">{pkg.title}</h3>
+                                </div>
+                                <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full border ${isSelected ? 'border-[#FF0000] text-[#FF0000]' : 'border-gray-200 text-gray-300'}`}>
+                                  {isSelected ? <Check size={17} strokeWidth={3} /> : <Circle size={10} />}
+                                </span>
+                              </div>
+                              <div className="mt-5 font-outfit text-3xl font-black text-gray-950">{pkg.price}</div>
+                              <p className="mt-4 text-[15px] font-medium leading-7 text-gray-600">{pkg.detailSubtitle}</p>
+                            </button>
+
+                            {pkg.suitableFor && (
+                              <div className="mt-6">
+                                <div className="text-xs font-black uppercase tracking-[0.08em] text-gray-400">Suitable For</div>
+                                <ul className="mt-3 space-y-2">
+                                  {pkg.suitableFor.map((item) => (
+                                    <li key={item} className="flex items-start gap-3 text-[15px] font-medium leading-6 text-gray-600">
+                                      <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#FF0000]" />
+                                      {item}
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+
+                            <div className="mt-6">
+                              <div className="text-xs font-black uppercase tracking-[0.08em] text-gray-400">Includes</div>
+                              <ul className={`mt-3 grid gap-x-8 gap-y-3 ${sectionPackages.length === 1 ? 'sm:grid-cols-2' : 'grid-cols-1'}`}>
+                                {pkg.features.map((feature) => (
+                                  <li key={feature} className="flex items-start gap-3 text-[15px] font-bold leading-6 text-gray-900">
+                                    <Check className="mt-1 h-4 w-4 shrink-0 text-[#FF0000]" strokeWidth={3} />
+                                    {feature}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            {pkg.footnote && <p className="mt-6 text-sm italic leading-6 text-gray-400">{pkg.footnote}</p>}
+
+                            <button
+                              type="button"
+                              onClick={() => startSignupForPackage(pkg.id)}
+                              className="mt-7 inline-flex h-12 items-center justify-center rounded-full bg-gray-950 px-6 text-sm font-black uppercase tracking-[0.08em] text-white transition-colors hover:bg-[#FF0000]"
+                            >
+                              Select Service
+                            </button>
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </motion.section>
+                );
+              })}
+            </div>
+          )}
         </div>
       </motion.div>
 
