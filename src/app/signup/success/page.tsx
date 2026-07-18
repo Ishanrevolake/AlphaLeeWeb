@@ -223,9 +223,9 @@ export default function SuccessPage() {
           <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
             <MessageCircle className="text-[#FF0000]" size={32} />
             <div>
-              <h3 className="text-xl font-bold text-gray-900">Need to ask a question?</h3>
+              <h3 className="text-xl font-bold text-gray-900">Need expert advice?</h3>
               <p className="mt-1 text-sm font-semibold leading-relaxed text-gray-600">
-                Ask Alpha payments and programme payments can now be tracked together from this page.
+                Whether it&apos;s training, nutrition, or technique, ask Alpha and receive personalized guidance tailored to your goals.
               </p>
             </div>
           </div>
