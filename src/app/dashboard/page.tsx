@@ -1,14 +1,13 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check, Dumbbell, ImagePlus, LogOut, MessageCircle, Plus, Scale, Send, ShoppingBasket, Utensils } from "lucide-react";
+import { Camera, Check, Download, Dumbbell, ImagePlus, LogOut, MessageCircle, Plus, Scale, ShoppingBasket, Upload, Utensils } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase";
-import { formatAskAlphaPrice } from "@/lib/askAlpha";
-import { hasVerifiedAskAlphaOrder, hasVerifiedPayment, type PaymentStatus } from "@/lib/clientAccess";
+import { hasVerifiedPayment } from "@/lib/clientAccess";
 
 type Profile = {
   full_name: string | null;
@@ -28,9 +27,12 @@ type MealPlanItem = {
   id: string;
   day_label: string | null;
   meal_label: string;
+  meal_name: string;
   food_items: string;
   calories: number | null;
   protein_g: number | null;
+  carbs_g: number | null;
+  fats_g: number | null;
   notes: string | null;
   sort_order: number;
 };
@@ -96,6 +98,8 @@ type ClientMealPlanRow = {
       items?: string[];
       calories?: number;
       protein?: number;
+      carbs?: number;
+      fat?: number;
       notes?: string;
     }>;
   }> | null;
@@ -108,44 +112,13 @@ type ProgressMeasurement = {
   waist_cm: number | null;
 };
 
-type AskAlphaOrder = {
+type ProgressPhoto = {
   id: string;
-  product_title: string;
-  question_credits: number;
-  amount_lkr: number;
-  reference: string;
-  status: PaymentStatus;
-  submitted_at: string;
-  verified_at: string | null;
-  rejection_reason: string | null;
-};
-
-type AskAlphaThread = {
-  id: string;
-  order_id: string;
-  subject: string;
-  status: "open" | "answered" | "closed";
-  created_at: string;
-  updated_at: string;
-};
-
-type AskAlphaMessage = {
-  id: string;
-  thread_id: string;
-  sender_id: string | null;
-  sender_role: "client" | "coach" | "admin";
-  body: string;
-  created_at: string;
-};
-
-type HydratedAskAlphaThread = AskAlphaThread & {
-  messages: AskAlphaMessage[];
-};
-
-const askAlphaStatusLabel: Record<PaymentStatus, string> = {
-  pending_verification: "Pending",
-  verified: "Verified",
-  rejected: "Rejected",
+  captured_on: string;
+  view_type: "front" | "side" | "back";
+  storage_path: string;
+  file_name: string;
+  signedUrl?: string;
 };
 
 export default function DashboardPage() {
@@ -157,19 +130,16 @@ export default function DashboardPage() {
   const [mealPlans, setMealPlans] = useState<MealPlan[]>([]);
   const [exercisePlans, setExercisePlans] = useState<ExercisePlan[]>([]);
   const [selectedWorkoutDay, setSelectedWorkoutDay] = useState("all");
+  const [selectedMealDay, setSelectedMealDay] = useState("");
   const [measurements, setMeasurements] = useState<ProgressMeasurement[]>([]);
+  const [progressPhotos, setProgressPhotos] = useState<ProgressPhoto[]>([]);
   const [weightInput, setWeightInput] = useState("");
   const [waistInput, setWaistInput] = useState("");
   const [isSavingMeasurement, setIsSavingMeasurement] = useState(false);
-  const [askAlphaOrders, setAskAlphaOrders] = useState<AskAlphaOrder[]>([]);
-  const [askAlphaThreads, setAskAlphaThreads] = useState<HydratedAskAlphaThread[]>([]);
-  const [newQuestionSubject, setNewQuestionSubject] = useState("");
-  const [newQuestionBody, setNewQuestionBody] = useState("");
-  const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
-  const [askAlphaMessage, setAskAlphaMessage] = useState("");
+  const [uploadingPhotoView, setUploadingPhotoView] = useState("");
+  const [dashboardMessage, setDashboardMessage] = useState("");
   const [isLoading, setIsLoading] = useState(true);
-  const [isSendingQuestion, setIsSendingQuestion] = useState(false);
-  const [activeReplyThreadId, setActiveReplyThreadId] = useState("");
+  const [isExportingPlans, setIsExportingPlans] = useState(false);
 
   const loadDashboard = useCallback(async () => {
     setIsLoading(true);
@@ -183,12 +153,9 @@ export default function DashboardPage() {
 
     setCurrentUserId(user.id);
 
-    const [programmeAccess, askAlphaAccess] = await Promise.all([
-      hasVerifiedPayment(user.id),
-      hasVerifiedAskAlphaOrder(user.id),
-    ]);
+    const programmeAccess = await hasVerifiedPayment(user.id);
 
-    if (!programmeAccess && !askAlphaAccess) {
+    if (!programmeAccess) {
       router.replace("/packages");
       return;
     }
@@ -203,46 +170,8 @@ export default function DashboardPage() {
 
     setProfile(profileResult.data || { full_name: null, first_name: null, email: user.email || null });
 
-    const askOrderResult = await supabase
-      .from("ask_alpha_orders")
-      .select("id, product_title, question_credits, amount_lkr, reference, status, submitted_at, verified_at, rejection_reason")
-      .eq("user_id", user.id)
-      .order("submitted_at", { ascending: false });
-
-    const orders = askOrderResult.error ? [] : ((askOrderResult.data || []) as AskAlphaOrder[]);
-    setAskAlphaOrders(orders);
-
-    const threadResult = await supabase
-      .from("ask_alpha_threads")
-      .select("id, order_id, subject, status, created_at, updated_at")
-      .eq("user_id", user.id)
-      .order("updated_at", { ascending: false });
-
-    const threads = threadResult.error ? [] : ((threadResult.data || []) as AskAlphaThread[]);
-    const threadIds = threads.map((thread) => thread.id);
-    const messageResult = threadIds.length
-      ? await supabase
-          .from("ask_alpha_messages")
-          .select("id, thread_id, sender_id, sender_role, body, created_at")
-          .in("thread_id", threadIds)
-          .order("created_at", { ascending: true })
-      : { data: [], error: null };
-
-    const messages = messageResult.error ? [] : ((messageResult.data || []) as AskAlphaMessage[]);
-    const messagesByThread = messages.reduce<Record<string, AskAlphaMessage[]>>((grouped, message) => {
-      grouped[message.thread_id] = [...(grouped[message.thread_id] || []), message];
-      return grouped;
-    }, {});
-
-    setAskAlphaThreads(
-      threads.map((thread) => ({
-        ...thread,
-        messages: messagesByThread[thread.id] || [],
-      })),
-    );
-
     if (programmeAccess) {
-      const [taskResult, mealResult, exerciseResult, measurementResult] = await Promise.all([
+      const [taskResult, mealResult, exerciseResult, measurementResult, photoResult] = await Promise.all([
         supabase
           .from("client_tasks")
           .select("id, title, description, due_on, status")
@@ -263,6 +192,12 @@ export default function DashboardPage() {
           .select("id, measured_on, body_weight_kg, waist_cm")
           .eq("client_id", user.id)
           .order("measured_on", { ascending: true }),
+        supabase
+          .from("progress_photos")
+          .select("id, captured_on, view_type, storage_path, file_name")
+          .eq("client_id", user.id)
+          .order("captured_on", { ascending: false })
+          .order("created_at", { ascending: false }),
       ]);
 
       setTasks((taskResult.data || []) as ClientTask[]);
@@ -280,9 +215,12 @@ export default function DashboardPage() {
             id: meal.id || `${day.id}-${mealIndex}`,
             day_label: day.day,
             meal_label: meal.mealTime || meal.name,
-            food_items: [meal.name, ...(meal.items || [])].filter(Boolean).join("\n"),
+            meal_name: meal.name,
+            food_items: (meal.items || []).filter(Boolean).join("\n"),
             calories: meal.calories || null,
             protein_g: meal.protein || null,
+            carbs_g: meal.carbs || null,
+            fats_g: meal.fat || null,
             notes: meal.notes || null,
             sort_order: dayIndex * 100 + mealIndex,
           })),
@@ -311,11 +249,18 @@ export default function DashboardPage() {
         ),
       })));
       setMeasurements((measurementResult.data || []) as ProgressMeasurement[]);
+      const photoRows = (photoResult.data || []) as ProgressPhoto[];
+      const hydratedPhotos = await Promise.all(photoRows.map(async (photo) => {
+        const { data } = await supabase.storage.from("progress-photos").createSignedUrl(photo.storage_path, 60 * 30);
+        return { ...photo, signedUrl: data?.signedUrl };
+      }));
+      setProgressPhotos(hydratedPhotos);
     } else {
       setTasks([]);
       setMealPlans([]);
       setExercisePlans([]);
       setMeasurements([]);
+      setProgressPhotos([]);
     }
 
     setIsLoading(false);
@@ -337,15 +282,20 @@ export default function DashboardPage() {
     if (!currentUserId || (!weight && !waist)) return;
 
     setIsSavingMeasurement(true);
-    const { error } = await supabase.from("progress_measurements").insert({
+    const measuredOn = new Date().toISOString().slice(0, 10);
+    const existingToday = measurements.find((item) => item.measured_on === measuredOn);
+    const payload = {
       client_id: currentUserId,
-      measured_on: new Date().toISOString().slice(0, 10),
-      body_weight_kg: weight,
-      waist_cm: waist,
-    });
+      measured_on: measuredOn,
+      body_weight_kg: weight ?? existingToday?.body_weight_kg ?? null,
+      waist_cm: waist ?? existingToday?.waist_cm ?? null,
+    };
+    const { error } = existingToday
+      ? await supabase.from("progress_measurements").update(payload).eq("id", existingToday.id)
+      : await supabase.from("progress_measurements").insert(payload);
 
     if (error) {
-      setAskAlphaMessage(error.message);
+      setDashboardMessage(error.message);
     } else {
       setWeightInput("");
       setWaistInput("");
@@ -354,98 +304,48 @@ export default function DashboardPage() {
     setIsSavingMeasurement(false);
   };
 
-  const verifiedAskAlphaOrders = askAlphaOrders.filter((order) => order.status === "verified");
-  const totalAskAlphaCredits = verifiedAskAlphaOrders.reduce((total, order) => total + Number(order.question_credits || 0), 0);
-  const usedAskAlphaCredits = askAlphaThreads.length;
-  const remainingAskAlphaCredits = Math.max(0, totalAskAlphaCredits - usedAskAlphaCredits);
-
-  const nextAskAlphaOrder = useMemo(() => {
-    return verifiedAskAlphaOrders.find((order) => {
-      const usedForOrder = askAlphaThreads.filter((thread) => thread.order_id === order.id).length;
-      return usedForOrder < Number(order.question_credits || 0);
-    });
-  }, [askAlphaThreads, verifiedAskAlphaOrders]);
-
-  const submitNewQuestion = async () => {
-    if (!currentUserId || !nextAskAlphaOrder) {
-      setAskAlphaMessage("You need a verified Ask Alpha credit before submitting a new question.");
+  const uploadProgressPhoto = async (viewType: ProgressPhoto["view_type"], file: File | null) => {
+    if (!currentUserId || !file) return;
+    if (!["image/jpeg", "image/png", "image/webp"].includes(file.type)) {
+      setDashboardMessage("Progress photos must be JPG, PNG, or WebP images.");
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setDashboardMessage("Progress photos must be smaller than 10 MB.");
       return;
     }
 
-    const subject = newQuestionSubject.trim();
-    const body = newQuestionBody.trim();
-
-    if (!subject || !body) {
-      setAskAlphaMessage("Please add a short subject and your question.");
-      return;
-    }
-
-    setIsSendingQuestion(true);
-    setAskAlphaMessage("");
-
-    const { data: thread, error: threadError } = await supabase
-      .from("ask_alpha_threads")
-      .insert({
-        order_id: nextAskAlphaOrder.id,
-        user_id: currentUserId,
-        subject,
-        status: "open",
-      })
-      .select("id")
-      .single();
-
-    if (threadError || !thread) {
-      setAskAlphaMessage(threadError?.message || "Unable to create your question thread.");
-      setIsSendingQuestion(false);
-      return;
-    }
-
-    const { error: messageError } = await supabase.from("ask_alpha_messages").insert({
-      thread_id: thread.id,
-      sender_id: currentUserId,
-      sender_role: "client",
-      body,
+    setUploadingPhotoView(viewType);
+    setDashboardMessage("");
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "-");
+    const capturedOn = new Date().toISOString().slice(0, 10);
+    const storagePath = `${currentUserId}/${capturedOn}/${viewType}-${Date.now()}-${safeName}`;
+    const { error: uploadError } = await supabase.storage.from("progress-photos").upload(storagePath, file, {
+      cacheControl: "3600",
+      upsert: false,
     });
 
-    if (messageError) {
-      setAskAlphaMessage(messageError.message);
-      setIsSendingQuestion(false);
+    if (uploadError) {
+      setDashboardMessage(uploadError.message);
+      setUploadingPhotoView("");
       return;
     }
 
-    setNewQuestionSubject("");
-    setNewQuestionBody("");
-    await loadDashboard();
-    setIsSendingQuestion(false);
-  };
-
-  const submitThreadReply = async (threadId: string) => {
-    const body = (replyDrafts[threadId] || "").trim();
-
-    if (!currentUserId || !body) {
-      return;
-    }
-
-    setActiveReplyThreadId(threadId);
-    setAskAlphaMessage("");
-
-    const { error: messageError } = await supabase.from("ask_alpha_messages").insert({
-      thread_id: threadId,
-      sender_id: currentUserId,
-      sender_role: "client",
-      body,
+    const { error: recordError } = await supabase.from("progress_photos").insert({
+      client_id: currentUserId,
+      captured_on: capturedOn,
+      view_type: viewType,
+      storage_path: storagePath,
+      file_name: file.name,
     });
 
-    if (messageError) {
-      setAskAlphaMessage(messageError.message);
-      setActiveReplyThreadId("");
-      return;
+    if (recordError) {
+      await supabase.storage.from("progress-photos").remove([storagePath]);
+      setDashboardMessage(recordError.message);
+    } else {
+      await loadDashboard();
     }
-
-    await supabase.from("ask_alpha_threads").update({ status: "open" }).eq("id", threadId);
-    setReplyDrafts((drafts) => ({ ...drafts, [threadId]: "" }));
-    await loadDashboard();
-    setActiveReplyThreadId("");
+    setUploadingPhotoView("");
   };
 
   if (isLoading) {
@@ -476,12 +376,85 @@ export default function DashboardPage() {
     day,
     items: mealItems.filter((item) => (item.day_label || "Daily") === day),
   })).filter((group) => group.items.length);
+  const activeMealDay = mealDayLabels.includes(selectedMealDay) ? selectedMealDay : mealDayLabels[0] || "";
+  const visibleMealGroup = groupedMeals.find((group) => group.day === activeMealDay);
+  const shoppingItems = Array.from(new Set(
+    mealItems
+      .flatMap((item) => item.food_items.split(/,|\n/).map((food) => food.trim()))
+      .filter(Boolean),
+  ));
   const weightDelta = latestMeasurement?.body_weight_kg != null && firstMeasurement?.body_weight_kg != null
     ? Number(latestMeasurement.body_weight_kg) - Number(firstMeasurement.body_weight_kg)
     : null;
   const waistDelta = latestMeasurement?.waist_cm != null && firstMeasurement?.waist_cm != null
     ? Number(latestMeasurement.waist_cm) - Number(firstMeasurement.waist_cm)
     : null;
+
+  const downloadPlans = async () => {
+    if (!mealItems.length && !exerciseItems.length) return;
+
+    setIsExportingPlans(true);
+    setDashboardMessage("");
+
+    try {
+      const XLSX = await import("xlsx");
+      const workbook = XLSX.utils.book_new();
+
+      if (mealItems.length) {
+        const mealRows = mealPlans.flatMap((plan) =>
+          plan.meal_plan_items
+            .slice()
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map((item) => ({
+              "Plan": plan.title,
+              "Day": item.day_label || "Daily",
+              "Meal": item.meal_label,
+              "Meal name": item.meal_name,
+              "Food items": item.food_items,
+              "Calories (kcal)": item.calories ?? "",
+              "Protein (g)": item.protein_g ?? "",
+              "Carbs (g)": item.carbs_g ?? "",
+              "Fat (g)": item.fats_g ?? "",
+              "Notes": item.notes || "",
+            })),
+        );
+        const mealSheet = XLSX.utils.json_to_sheet(mealRows);
+        mealSheet["!cols"] = [
+          { wch: 24 }, { wch: 14 }, { wch: 18 }, { wch: 28 }, { wch: 48 },
+          { wch: 16 }, { wch: 14 }, { wch: 12 }, { wch: 10 }, { wch: 36 },
+        ];
+        XLSX.utils.book_append_sheet(workbook, mealSheet, "Meal Plan");
+      }
+
+      if (exerciseItems.length) {
+        const exerciseRows = exercisePlans.flatMap((plan) =>
+          plan.exercise_plan_items
+            .slice()
+            .sort((a, b) => a.sort_order - b.sort_order)
+            .map((item) => ({
+              "Plan": plan.title,
+              "Day": item.day_label || "Unscheduled",
+              "Exercise": item.exercise_name,
+              "Sets": item.sets || "",
+              "Reps": item.reps || "",
+              "Notes": item.notes || "",
+            })),
+        );
+        const exerciseSheet = XLSX.utils.json_to_sheet(exerciseRows);
+        exerciseSheet["!cols"] = [
+          { wch: 24 }, { wch: 14 }, { wch: 30 }, { wch: 12 }, { wch: 12 }, { wch: 48 },
+        ];
+        XLSX.utils.book_append_sheet(workbook, exerciseSheet, "Exercises");
+      }
+
+      const safeName = displayName.replace(/[^a-zA-Z0-9_-]+/g, "-").replace(/^-|-$/g, "") || "client";
+      XLSX.writeFile(workbook, `${safeName}-fitness-plans-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    } catch {
+      setDashboardMessage("We could not create the Excel file. Please try again.");
+    } finally {
+      setIsExportingPlans(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#F6F3EC] px-4 py-8 text-[#14161D] sm:px-6 sm:py-10">
@@ -498,9 +471,7 @@ export default function DashboardPage() {
               Welcome back, {displayName}
             </h1>
             <p className="mt-2 max-w-2xl text-sm font-medium leading-relaxed text-[#5B5D66] sm:text-base">
-              {hasProgrammeAccess
-                ? "Your programme, meals, measurements and coach messages all live here."
-                : "Your Ask Alpha question credits and replies live here after payment verification."}
+              Your programme, meals, measurements and trainer updates all live here.
             </p>
             {profile?.email && <p className="mt-1 text-xs font-bold text-[#5B5D66]">Signed in as {profile.email}</p>}
           </div>
@@ -510,27 +481,33 @@ export default function DashboardPage() {
           </Button>
         </div>
 
-        <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {dashboardMessage && <div className="mb-5 rounded-xl bg-[#FBE4DE] p-4 text-sm font-bold text-[#8F2F20]">{dashboardMessage}</div>}
+
+        <div className="mb-6 flex flex-wrap justify-end gap-3">
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={downloadPlans}
+            disabled={!mealItems.length && !exerciseItems.length}
+            isLoading={isExportingPlans}
+            className="h-11 gap-2 rounded-xl border-2 border-[#3F6B4F] bg-white px-5 text-[#3F6B4F] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <Download size={16} />
+            Download plans
+          </Button>
+          <Link href="/ask-alpha/dashboard" className="inline-flex h-11 items-center gap-2 rounded-xl bg-[#14161D] px-5 text-sm font-black text-white transition-colors hover:bg-[#E1472B]">
+            <MessageCircle size={16} />
+            Open Ask Alpha
+          </Link>
+        </div>
+
+        <div className="mb-6 grid gap-4 sm:grid-cols-3">
           <DashboardStat icon={<Dumbbell size={19} />} value={`${completedTasks}/${tasks.length}`} label="Tasks completed" tone="bg-[#FBE4DE] text-[#E1472B]" />
           <DashboardStat icon={<Utensils size={19} />} value={mealPlans.length} label="Active meal plans" tone="bg-[#E4EEE3] text-[#3F6B4F]" />
           <DashboardStat icon={<Scale size={19} />} value={latestMeasurement?.body_weight_kg ? `${latestMeasurement.body_weight_kg}kg` : "—"} label="Latest weight" tone="bg-[#F5EAD3] text-[#B98A2E]" />
-          <DashboardStat icon={<MessageCircle size={19} />} value={remainingAskAlphaCredits} label="Ask Alpha credits" tone="bg-[#EDEBF6] text-[#514A77]" />
         </div>
 
-        {!hasProgrammeAccess ? (
-          <section className="rounded-2xl border border-[#E7E1D3] bg-white p-6 text-center shadow-sm sm:p-8">
-            <h2 className="font-outfit text-2xl font-black tracking-tight text-gray-900">Want the full coaching dashboard?</h2>
-            <p className="mx-auto mt-2 max-w-2xl text-sm font-semibold leading-relaxed text-gray-500">
-              Ask Alpha gives paid answers to focused questions. Full coaching packages unlock training plans, meal plans, progress tasks, and ongoing coaching support.
-            </p>
-            <Link
-              href="/packages"
-              className="mt-6 inline-flex h-12 items-center justify-center rounded-full bg-[#FF0000] px-6 text-sm font-black uppercase tracking-[0.08em] text-white transition-colors hover:bg-red-700"
-            >
-              View programmes
-            </Link>
-          </section>
-        ) : (
+        {hasProgrammeAccess && (
           <div className="space-y-6">
             <DashboardCard eyebrow="Training" title="Your Workout Programme" subtitle={exercisePlans[0]?.title || "Your coach will publish your programme here."}>
               {groupedExercises.length ? (
@@ -571,10 +548,67 @@ export default function DashboardPage() {
 
             <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
               <DashboardCard eyebrow="Nutrition" title="Meal Plan" subtitle={mealPlans[0]?.notes || mealPlans[0]?.title || "Prepared by your coach"}>
-                {groupedMeals.length ? groupedMeals.map((group) => <div key={group.day} className="mb-5 last:mb-0"><h3 className="mb-2 text-xs font-black uppercase tracking-wider text-[#3F6B4F]">{group.day}</h3>{group.items.sort((a,b)=>a.sort_order-b.sort_order).map((item)=><div key={item.id} className="mb-2 rounded-xl border border-[#E7E1D3] bg-[#F6F3EC] p-4"><div className="flex justify-between gap-3"><div className="text-sm font-black">{item.meal_label}</div>{item.calories && <div className="font-mono text-xs text-[#5B5D66]">{item.calories} kcal</div>}</div><p className="mt-1 text-sm leading-6 text-[#5B5D66]">{item.food_items}</p>{item.protein_g && <div className="mt-2 text-xs font-bold text-[#3F6B4F]">{item.protein_g}g protein</div>}</div>)}</div>) : <EmptyState icon={<Utensils size={24}/>} title="No meal plan yet" text="Once your coach prepares your meals, they will appear here."/>}
+                {groupedMeals.length ? (
+                  <div>
+                    <div className="mb-5 flex gap-2 overflow-x-auto pb-2">
+                      {mealDayLabels.map((day) => {
+                        const count = mealItems.filter((item) => (item.day_label || "Daily") === day).length;
+                        const isActive = day === activeMealDay;
+                        return (
+                          <button
+                            type="button"
+                            key={day}
+                            onClick={() => setSelectedMealDay(day)}
+                            className={`min-w-[76px] rounded-xl border px-3 py-2 text-center transition-colors ${isActive ? "border-[#3F6B4F] bg-[#3F6B4F] text-white" : "border-[#E7E1D3] bg-[#F6F3EC] text-[#5B5D66] hover:border-[#3F6B4F]"}`}
+                          >
+                            <div className="text-[10px] font-black uppercase tracking-wide">{day.slice(0, 3)}</div>
+                            <div className="mt-0.5 text-xs font-bold">{count} {count === 1 ? "meal" : "meals"}</div>
+                          </button>
+                        );
+                      })}
+                    </div>
+
+                    <div className="mb-3 flex items-center justify-between gap-3">
+                      <h3 className="text-sm font-black uppercase tracking-wider text-[#3F6B4F]">{activeMealDay}</h3>
+                      <span className="text-xs font-bold text-[#5B5D66]">{visibleMealGroup?.items.length || 0} scheduled</span>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      {visibleMealGroup?.items.sort((a, b) => a.sort_order - b.sort_order).map((item) => {
+                        const ingredients = item.food_items.split(/,|\n/).map((food) => food.trim()).filter(Boolean);
+                        return (
+                          <article key={item.id} className="rounded-2xl border border-[#E7E1D3] bg-[#F6F3EC] p-4">
+                            <div className="flex items-start justify-between gap-3">
+                              <div>
+                                <div className="text-[10px] font-black uppercase tracking-[0.12em] text-[#3F6B4F]">{item.meal_label}</div>
+                                <h4 className="mt-1 text-base font-black text-[#14161D]">{item.meal_name || item.meal_label}</h4>
+                              </div>
+                              {item.calories != null && <span className="shrink-0 rounded-full bg-white px-2.5 py-1 font-mono text-[11px] font-bold text-[#5B5D66]">{item.calories} kcal</span>}
+                            </div>
+
+                            {ingredients.length > 0 && (
+                              <div className="mt-3 flex flex-wrap gap-1.5">
+                                {ingredients.map((ingredient, index) => <span key={`${ingredient}-${index}`} className="rounded-lg border border-[#E7E1D3] bg-white px-2 py-1 text-xs font-semibold text-[#5B5D66]">{ingredient}</span>)}
+                              </div>
+                            )}
+
+                            {(item.protein_g != null || item.carbs_g != null || item.fats_g != null) && (
+                              <div className="mt-4 grid grid-cols-3 gap-2 border-t border-[#E7E1D3] pt-3 text-center">
+                                <MacroBadge label="Protein" value={item.protein_g} />
+                                <MacroBadge label="Carbs" value={item.carbs_g} />
+                                <MacroBadge label="Fat" value={item.fats_g} />
+                              </div>
+                            )}
+                            {item.notes && <p className="mt-3 text-xs leading-5 text-[#5B5D66]">{item.notes}</p>}
+                          </article>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : <EmptyState icon={<Utensils size={24}/>} title="No meal plan yet" text="Once your coach prepares your meals, they will appear here."/>}
               </DashboardCard>
               <DashboardCard eyebrow="From your meal plan" title="Shopping List" subtitle="Food items assigned by your coach">
-                {mealItems.length ? <div className="space-y-2">{Array.from(new Set(mealItems.flatMap((item) => item.food_items.split(/,|\n/).map((food) => food.trim())).filter(Boolean))).map((food)=><label key={food} className="flex cursor-pointer items-center gap-3 border-b border-dashed border-[#E7E1D3] py-2 text-sm"><input type="checkbox" className="h-4 w-4 accent-[#3F6B4F]"/>{food}</label>)}</div> : <EmptyState icon={<ShoppingBasket size={24}/>} title="Nothing to list yet" text="Shopping items will be generated from your meal plan."/>}
+                {shoppingItems.length ? <div className="space-y-1">{shoppingItems.map((food)=><label key={food} className="flex cursor-pointer items-start gap-3 rounded-lg px-2 py-2.5 text-sm transition-colors hover:bg-[#F6F3EC]"><input type="checkbox" className="mt-0.5 h-4 w-4 shrink-0 accent-[#3F6B4F]"/><span className="font-semibold leading-5 text-[#3D4048]">{food}</span></label>)}</div> : <EmptyState icon={<ShoppingBasket size={24}/>} title="Nothing to list yet" text="Shopping items will be generated from your meal plan."/>}
               </DashboardCard>
             </div>
 
@@ -585,18 +619,34 @@ export default function DashboardPage() {
             <div className="flex justify-end"><Button type="button" onClick={saveMeasurement} isLoading={isSavingMeasurement} className="gap-2 rounded-xl bg-[#14161D] px-5 text-white"><Plus size={16}/>Save today&apos;s measurements</Button></div>
 
             <DashboardCard eyebrow="Weekly" title="Progress Photos" subtitle="Front, side and back photos help your coach track visual change.">
-              <EmptyState icon={<ImagePlus size={25}/>} title="Progress photo uploads need setup" text="Your database does not yet include progress-photo storage. No demo photos are shown in place of your real data."/>
+              <div className="grid gap-3 sm:grid-cols-3">
+                {(["front", "side", "back"] as const).map((viewType) => (
+                  <label key={viewType} className="relative flex min-h-36 cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#E7E1D3] bg-[#F6F3EC] p-5 text-center transition-colors hover:border-[#E1472B] hover:bg-[#FBE4DE]">
+                    {uploadingPhotoView === viewType ? <div className="text-sm font-black text-[#E1472B]">Uploading...</div> : <><Upload size={24} className="text-[#E1472B]" /><div className="mt-2 font-black capitalize">{viewType} photo</div><div className="mt-1 text-xs font-semibold text-[#5B5D66]">JPG, PNG or WebP · max 10 MB</div></>}
+                    <input type="file" accept="image/jpeg,image/png,image/webp" disabled={Boolean(uploadingPhotoView)} className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-wait" onChange={(event) => { const file = event.target.files?.[0] || null; void uploadProgressPhoto(viewType, file); event.currentTarget.value = ""; }} />
+                  </label>
+                ))}
+              </div>
+
+              {progressPhotos.length ? (
+                <div className="mt-6">
+                  <div className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-[#5B5D66]">Photo history</div>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {progressPhotos.map((photo) => (
+                      <article key={photo.id} className="overflow-hidden rounded-xl border border-[#E7E1D3] bg-[#F6F3EC]">
+                        {photo.signedUrl ? <a href={photo.signedUrl} target="_blank" rel="noreferrer"><img src={photo.signedUrl} alt={`${photo.view_type} progress photo from ${photo.captured_on}`} className="aspect-[4/5] w-full object-cover" /></a> : <div className="flex aspect-[4/5] items-center justify-center text-gray-400"><Camera size={28} /></div>}
+                        <div className="flex items-center justify-between gap-3 p-3"><span className="font-black capitalize">{photo.view_type}</span><span className="text-xs font-bold text-[#5B5D66]">{new Date(`${photo.captured_on}T00:00:00`).toLocaleDateString()}</span></div>
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-5"><EmptyState icon={<ImagePlus size={25}/>} title="No progress photos yet" text="Upload front, side, and back photos to build your visual progress history."/></div>
+              )}
             </DashboardCard>
           </div>
         )}
 
-        <DashboardCard eyebrow="Direct line" title="Ask Alpha Messages" subtitle="Your paid questions and replies from Alpha Lee.">
-          <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><div className="text-sm font-bold text-[#5B5D66]">{remainingAskAlphaCredits} question credit{remainingAskAlphaCredits === 1 ? "" : "s"} remaining</div><Link href="/ask-alpha" className="rounded-lg bg-[#14161D] px-4 py-2 text-sm font-black text-white">Buy credits</Link></div>
-          {askAlphaOrders.length > 0 && <div className="mb-5 grid gap-2 sm:grid-cols-3">{askAlphaOrders.slice(0,3).map((order)=><div key={order.id} className="rounded-xl bg-[#F6F3EC] p-3"><div className="text-sm font-black">{order.product_title}</div><div className="mt-1 flex justify-between text-xs text-[#5B5D66]"><span>{formatAskAlphaPrice(order.amount_lkr)}</span><span>{askAlphaStatusLabel[order.status]}</span></div></div>)}</div>}
-          {remainingAskAlphaCredits > 0 && <div className="mb-6 grid gap-3 rounded-xl border border-[#E7E1D3] bg-[#F6F3EC] p-4"><input value={newQuestionSubject} onChange={(e)=>setNewQuestionSubject(e.target.value)} placeholder="Short subject" className="rounded-lg border border-[#E7E1D3] bg-white px-4 py-3 text-sm text-[#14161D] placeholder:text-gray-400"/><textarea value={newQuestionBody} onChange={(e)=>setNewQuestionBody(e.target.value)} rows={3} placeholder="Ask about your programme, nutrition or technique..." className="resize-none rounded-lg border border-[#E7E1D3] bg-white px-4 py-3 text-sm text-[#14161D] placeholder:text-gray-400"/><Button type="button" onClick={submitNewQuestion} isLoading={isSendingQuestion} className="w-fit gap-2 rounded-lg bg-[#E1472B] text-white"><Send size={15}/>Send question</Button></div>}
-          {askAlphaMessage && <div className="mb-4 rounded-lg bg-[#FBE4DE] p-3 text-sm font-bold">{askAlphaMessage}</div>}
-          <div className="space-y-4">{askAlphaThreads.length ? askAlphaThreads.map((thread)=><article key={thread.id} className="rounded-xl border border-[#E7E1D3] bg-[#F6F3EC] p-4"><div className="mb-3 flex justify-between gap-3"><h3 className="font-outfit text-lg font-black">{thread.subject}</h3><span className="text-[10px] font-black uppercase tracking-wider text-[#5B5D66]">{thread.status}</span></div><div className="space-y-2">{thread.messages.map((message)=><div key={message.id} className={`flex ${message.sender_role === "client" ? "justify-end" : "justify-start"}`}><div className={`max-w-[85%] rounded-xl p-3 text-sm leading-6 ${message.sender_role === "client" ? "bg-[#14161D] text-white" : "border border-[#E7E1D3] bg-white"}`}>{message.body}<div className="mt-1 text-[10px] opacity-50">{new Date(message.created_at).toLocaleString()}</div></div></div>)}</div>{thread.status !== "closed" && <div className="mt-3 flex gap-2"><textarea value={replyDrafts[thread.id] || ""} onChange={(e)=>setReplyDrafts((drafts)=>({...drafts,[thread.id]:e.target.value}))} rows={2} placeholder="Reply in this thread" className="flex-1 resize-none rounded-lg border border-[#E7E1D3] bg-white px-3 py-2 text-sm text-[#14161D]"/><Button type="button" onClick={()=>submitThreadReply(thread.id)} isLoading={activeReplyThreadId === thread.id} className="self-end rounded-lg bg-[#E1472B] text-white">Reply</Button></div>}</article>) : <EmptyState icon={<MessageCircle size={24}/>} title="No messages yet" text="Your conversation with Alpha Lee will appear here."/>}</div>
-        </DashboardCard>
       </motion.div>
     </div>
   );
@@ -620,6 +670,15 @@ function DashboardStat({ icon, value, label, tone }: { icon: React.ReactNode; va
       <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${tone}`}>{icon}</div>
       <div className="font-outfit text-2xl font-black text-[#14161D]">{value}</div>
       <div className="text-sm font-medium text-[#5B5D66]">{label}</div>
+    </div>
+  );
+}
+
+function MacroBadge({ label, value }: { label: string; value: number | null }) {
+  return (
+    <div>
+      <div className="font-mono text-xs font-black text-[#14161D]">{value != null ? `${value}g` : "—"}</div>
+      <div className="mt-0.5 text-[9px] font-black uppercase tracking-wide text-[#7A7C84]">{label}</div>
     </div>
   );
 }

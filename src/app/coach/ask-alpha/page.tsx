@@ -10,7 +10,7 @@ import { formatAskAlphaPrice } from "@/lib/askAlpha";
 import { supabase } from "@/lib/supabase";
 
 type AccessState = "checking" | "login" | "denied" | "ready";
-type StaffRole = "coach" | "admin";
+type StaffRole = "trainer";
 
 type AskAlphaThread = {
   id: string;
@@ -26,7 +26,7 @@ type AskAlphaMessage = {
   id: string;
   thread_id: string;
   sender_id: string | null;
-  sender_role: "client" | "coach" | "admin";
+  sender_role: "client" | "trainer";
   body: string;
   created_at: string;
 };
@@ -65,7 +65,7 @@ export default function CoachAskAlphaPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [staffUserId, setStaffUserId] = useState("");
-  const [staffRole, setStaffRole] = useState<StaffRole>("coach");
+  const [staffRole, setStaffRole] = useState<StaffRole>("trainer");
   const [replyDrafts, setReplyDrafts] = useState<Record<string, string>>({});
   const [activeThreadId, setActiveThreadId] = useState("");
 
@@ -90,7 +90,7 @@ export default function CoachAskAlphaPage() {
 
     const role = String(profile?.role || "");
 
-    if (profileError || !["coach", "admin"].includes(role)) {
+    if (profileError || role !== "trainer") {
       setAccessState("denied");
       setIsLoading(false);
       return;
@@ -258,14 +258,14 @@ export default function CoachAskAlphaPage() {
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF0000]/10 text-[#FF0000]">
               <Lock size={22} />
             </div>
-            <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900">Coach Login</h1>
+            <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900">Trainer Q&amp;A Login</h1>
             <p className="mt-2 text-sm font-semibold leading-relaxed text-gray-500">
-              Use a coach or admin account to reply to Ask Alpha questions.
+              Use your trainer account to review and reply to client Q&amp;A questions.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <Input name="email" type="email" label="Email Address" placeholder="coach@example.com" autoComplete="email" />
+            <Input name="email" type="email" label="Email Address" placeholder="trainer@example.com" autoComplete="email" />
             <div className="relative">
               <Input
                 name="password"
@@ -299,9 +299,9 @@ export default function CoachAskAlphaPage() {
       <div className="flex min-h-[calc(100svh-64px)] items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg rounded-3xl border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-8">
           <XCircle className="mx-auto text-[#FF0000]" size={34} />
-          <h1 className="mt-4 font-outfit text-3xl font-black tracking-tight text-gray-900">Coach access required</h1>
+          <h1 className="mt-4 font-outfit text-3xl font-black tracking-tight text-gray-900">Trainer access required</h1>
           <p className="mt-2 text-sm font-semibold leading-relaxed text-gray-500">
-            Your account needs the `coach` or `admin` role in the profiles table.
+            This workspace is available only to accounts with the `trainer` role.
           </p>
           <Button type="button" variant="secondary" onClick={signOut} className="mt-6 h-12 rounded-full px-5">
             Sign out
@@ -321,15 +321,15 @@ export default function CoachAskAlphaPage() {
       >
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="mb-3 text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000]">Coach inbox</div>
-            <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900 sm:text-5xl">Ask Alpha Messages</h1>
+            <div className="mb-3 text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000]">Trainer workspace</div>
+            <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900 sm:text-5xl">Q&amp;A Messages</h1>
             <p className="mt-3 max-w-2xl text-sm font-semibold leading-relaxed text-gray-600 sm:text-base">
               Read paid client questions, reply inside the thread, and close threads when they are complete.
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/coach/payments"
+              href="/trainer/payments"
               className="inline-flex h-12 items-center justify-center rounded-full border-2 border-gray-900 bg-white px-5 text-sm font-black uppercase tracking-[0.08em] text-gray-900 alpha-black-block-shadow transition-colors hover:bg-gray-50"
             >
               Payments
@@ -384,7 +384,7 @@ export default function CoachAskAlphaPage() {
 
                 <div className="space-y-3 rounded-3xl bg-[#F9F8F4] p-4">
                   {thread.messages.map((item) => {
-                    const isStaff = item.sender_role === "coach" || item.sender_role === "admin";
+                    const isStaff = item.sender_role === "trainer";
 
                     return (
                       <div key={item.id} className={`flex ${isStaff ? "justify-end" : "justify-start"}`}>
@@ -392,7 +392,7 @@ export default function CoachAskAlphaPage() {
                           isStaff ? "bg-gray-900 text-white" : "bg-white text-gray-700"
                         }`}>
                           <div className={`mb-2 text-[11px] font-black uppercase tracking-[0.12em] ${isStaff ? "text-white/50" : "text-[#FF0000]"}`}>
-                            {isStaff ? "Coach" : thread.profile?.full_name || "Client"}
+                            {isStaff ? "Trainer" : thread.profile?.full_name || "Client"}
                           </div>
                           <p className="whitespace-pre-wrap">{item.body}</p>
                           <div className={`mt-2 text-[11px] font-bold ${isStaff ? "text-white/45" : "text-gray-400"}`}>

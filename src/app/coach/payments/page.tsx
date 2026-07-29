@@ -116,7 +116,7 @@ export default function CoachPaymentsPage() {
       .eq("id", user.id)
       .maybeSingle();
 
-    if (profileError || !profile || !["coach", "admin"].includes(String(profile.role))) {
+    if (profileError || !profile || String(profile.role) !== "trainer") {
       setAccessState("denied");
       setIsLoading(false);
       return;
@@ -196,6 +196,7 @@ export default function CoachPaymentsPage() {
         )
       `,
       )
+      .not("package_selection_id", "is", null)
       .order("submitted_at", { ascending: false });
 
     if (!askAlphaError) {
@@ -350,14 +351,14 @@ export default function CoachPaymentsPage() {
             <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF0000]/10 text-[#FF0000]">
               <Lock size={22} />
             </div>
-            <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900">Coach Login</h1>
+            <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900">Trainer Login</h1>
             <p className="mt-2 text-sm font-semibold leading-relaxed text-gray-500">
-              Use a coach or admin account to review submitted payment slips.
+              Use your trainer account to review submitted payment slips.
             </p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-4">
-            <Input name="email" type="email" label="Email Address" placeholder="coach@example.com" autoComplete="email" />
+            <Input name="email" type="email" label="Email Address" placeholder="trainer@example.com" autoComplete="email" />
             <div className="relative">
               <Input
                 name="password"
@@ -391,9 +392,9 @@ export default function CoachPaymentsPage() {
       <div className="flex min-h-[calc(100svh-64px)] items-center justify-center px-4 py-10">
         <div className="w-full max-w-lg rounded-3xl border border-gray-100 bg-white p-6 text-center shadow-sm sm:p-8">
           <XCircle className="mx-auto text-[#FF0000]" size={34} />
-          <h1 className="mt-4 font-outfit text-3xl font-black tracking-tight text-gray-900">Coach access required</h1>
+          <h1 className="mt-4 font-outfit text-3xl font-black tracking-tight text-gray-900">Trainer access required</h1>
           <p className="mt-2 text-sm font-semibold leading-relaxed text-gray-500">
-            Your account needs the `coach` or `admin` role in the profiles table.
+            This workspace is available only to accounts with the `trainer` role.
           </p>
           <Button type="button" variant="secondary" onClick={signOut} className="mt-6 h-12 rounded-full px-5">
             Sign out
@@ -413,7 +414,7 @@ export default function CoachPaymentsPage() {
       >
         <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="mb-3 text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000]">Coach payments</div>
+            <div className="mb-3 text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000]">Trainer payments</div>
             <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900 sm:text-5xl">Payment Verification</h1>
             <p className="mt-3 max-w-2xl text-sm font-semibold leading-relaxed text-gray-600 sm:text-base">
               Verified payments unlock the client dashboard automatically.
@@ -421,11 +422,11 @@ export default function CoachPaymentsPage() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/coach/ask-alpha"
+              href="/trainer/qa"
               className="inline-flex h-12 items-center justify-center gap-2 rounded-full border-2 border-gray-900 bg-white px-5 text-sm font-black uppercase tracking-[0.08em] text-gray-900 alpha-black-block-shadow transition-colors hover:bg-gray-50"
             >
               <MessageCircle size={16} />
-              Ask Alpha Inbox
+              Q&amp;A Inbox
             </Link>
             <Button type="button" variant="secondary" onClick={loadPayments} isLoading={isLoading} className="h-12 gap-2 rounded-full px-5">
               <RefreshCw size={16} />

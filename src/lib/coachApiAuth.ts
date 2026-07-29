@@ -46,8 +46,8 @@ export async function requireCoach(req: CoachApiRequest) {
     .eq("id", authData.user.id)
     .maybeSingle();
 
-  if (profileError || !profile || !["coach", "admin"].includes(String(profile.role))) {
-    return { error: "Coach access required.", status: 403 as const };
+  if (profileError || !profile || String(profile.role) !== "trainer") {
+    return { error: "Trainer access required.", status: 403 as const };
   }
 
   return { supabaseAdmin, user: authData.user };

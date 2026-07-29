@@ -3,13 +3,15 @@
 
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TYPE public.app_role AS ENUM ('client', 'coach', 'admin');
+CREATE TYPE public.app_role AS ENUM ('client', 'trainer');
+CREATE TYPE public.client_access_type AS ENUM ('main', 'ask_alpha', 'both');
 CREATE TYPE public.payment_status AS ENUM ('pending_verification', 'verified', 'rejected');
 CREATE TYPE public.task_status AS ENUM ('todo', 'in_progress', 'done');
 
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   role public.app_role NOT NULL DEFAULT 'client',
+  client_type public.client_access_type NOT NULL DEFAULT 'main',
   first_name TEXT NOT NULL DEFAULT '',
   last_name TEXT NOT NULL DEFAULT '',
   full_name TEXT NOT NULL DEFAULT '',
@@ -288,6 +290,8 @@ CREATE TABLE public.payments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
   package_selection_id UUID REFERENCES public.package_selections(id) ON DELETE SET NULL,
+  ask_alpha_order_id UUID,
+  service_type TEXT NOT NULL DEFAULT 'programme' CHECK (service_type IN ('programme', 'ask_alpha')),
   method TEXT NOT NULL DEFAULT 'bank',
   reference TEXT NOT NULL UNIQUE,
   amount_lkr INTEGER NOT NULL,
@@ -410,6 +414,14 @@ CREATE TABLE public.ask_alpha_orders (
   rejection_reason TEXT
 );
 
+ALTER TABLE public.payments
+  ADD CONSTRAINT payments_ask_alpha_order_id_fkey
+  FOREIGN KEY (ask_alpha_order_id) REFERENCES public.ask_alpha_orders(id) ON DELETE CASCADE;
+
+CREATE UNIQUE INDEX payments_ask_alpha_order_id_key
+  ON public.payments(ask_alpha_order_id)
+  WHERE ask_alpha_order_id IS NOT NULL;
+
 CREATE TABLE public.ask_alpha_threads (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   order_id UUID NOT NULL REFERENCES public.ask_alpha_orders(id) ON DELETE CASCADE,
@@ -424,7 +436,7 @@ CREATE TABLE public.ask_alpha_messages (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   thread_id UUID NOT NULL REFERENCES public.ask_alpha_threads(id) ON DELETE CASCADE,
   sender_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
-  sender_role TEXT NOT NULL CHECK (sender_role IN ('client', 'coach', 'admin')),
+  sender_role TEXT NOT NULL CHECK (sender_role IN ('client', 'trainer')),
   body TEXT NOT NULL CHECK (length(trim(body)) > 0),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -516,6 +528,17 @@ CREATE TABLE public.progress_measurements (
   hips_cm NUMERIC,
   thigh_cm NUMERIC,
   arm_cm NUMERIC,
+  notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TABLE public.progress_photos (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  client_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+  captured_on DATE NOT NULL DEFAULT current_date,
+  view_type TEXT NOT NULL CHECK (view_type IN ('front', 'side', 'back')),
+  storage_path TEXT NOT NULL UNIQUE,
+  file_name TEXT NOT NULL,
   notes TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -627,7 +650,7 @@ AS $$
     SELECT 1
     FROM public.profiles
     WHERE id = user_id
-      AND role IN ('coach', 'admin')
+      AND role = 'trainer'
   );
 $$;
 
@@ -667,6 +690,7 @@ ALTER TABLE public.exercise_plan_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.client_tasks ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.tracking_checkins ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.progress_measurements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.progress_photos ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Profiles are visible to owner and staff"
   ON public.profiles FOR SELECT
@@ -893,8 +917,26 @@ CREATE POLICY "Measurements visible to owner and staff"
   ON public.progress_measurements FOR SELECT
   USING (public.is_record_owner(client_id) OR public.is_staff());
 
+CREATE POLICY "Clients can update own measurements"
+  ON public.progress_measurements FOR UPDATE
+  USING (public.is_record_owner(client_id))
+  WITH CHECK (public.is_record_owner(client_id));
+
 CREATE POLICY "Staff can manage measurements"
   ON public.progress_measurements FOR ALL
+  USING (public.is_staff())
+  WITH CHECK (public.is_staff());
+
+CREATE POLICY "Clients can create own progress photos"
+  ON public.progress_photos FOR INSERT
+  WITH CHECK (public.is_record_owner(client_id));
+
+CREATE POLICY "Progress photos visible to owner and staff"
+  ON public.progress_photos FOR SELECT
+  USING (public.is_record_owner(client_id) OR public.is_staff());
+
+CREATE POLICY "Staff can manage progress photos"
+  ON public.progress_photos FOR ALL
   USING (public.is_staff())
   WITH CHECK (public.is_staff());
 
@@ -925,6 +967,40 @@ CREATE POLICY "Clients can view own payment slips"
     )
   );
 
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+  'progress-photos',
+  'progress-photos',
+  false,
+  10485760,
+  ARRAY['image/jpeg', 'image/png', 'image/webp']
+)
+ON CONFLICT (id) DO NOTHING;
+
+CREATE POLICY "Clients can upload own progress photos"
+  ON storage.objects FOR INSERT
+  WITH CHECK (
+    bucket_id = 'progress-photos'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+  );
+
+CREATE POLICY "Progress photo files visible to owner and staff"
+  ON storage.objects FOR SELECT
+  USING (
+    bucket_id = 'progress-photos'
+    AND (
+      auth.uid()::text = (storage.foldername(name))[1]
+      OR public.is_staff()
+    )
+  );
+
+CREATE POLICY "Clients can remove own progress photos"
+  ON storage.objects FOR DELETE
+  USING (
+    bucket_id = 'progress-photos'
+    AND auth.uid()::text = (storage.foldername(name))[1]
+  );
+
 CREATE INDEX onboarding_submissions_user_id_idx ON public.onboarding_submissions(user_id);
 CREATE INDEX packages_category_idx ON public.packages(category);
 CREATE INDEX package_selections_user_id_idx ON public.package_selections(user_id);
@@ -940,3 +1016,4 @@ CREATE INDEX exercise_plans_client_id_idx ON public.exercise_plans(client_id);
 CREATE INDEX client_tasks_client_id_idx ON public.client_tasks(client_id);
 CREATE INDEX tracking_checkins_client_id_idx ON public.tracking_checkins(client_id);
 CREATE INDEX progress_measurements_client_id_idx ON public.progress_measurements(client_id);
+CREATE INDEX progress_photos_client_date_idx ON public.progress_photos(client_id, captured_on DESC);

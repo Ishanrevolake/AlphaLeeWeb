@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlertCircle, Eye, EyeOff, LayoutDashboard, Lock, LogIn, LogOut, Menu, UserCircle, X } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, LayoutDashboard, Lock, LogIn, LogOut, Menu, MessageCircle, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { supabase } from "@/lib/supabase";
@@ -91,18 +91,18 @@ export function Header() {
     setIsLoginOpen(false);
     setUserId(userId || null);
 
-    if (
-      latestPayment?.status === "pending_verification" ||
-      latestPayment?.status === "rejected" ||
-      latestAskAlphaOrder?.status === "pending_verification" ||
-      latestAskAlphaOrder?.status === "rejected"
-    ) {
-      router.push("/signup/success");
+    if (latestPayment?.status === "verified") {
+      router.push("/dashboard");
       return;
     }
 
-    if (latestPayment?.status === "verified" || latestAskAlphaOrder?.status === "verified") {
-      router.push("/dashboard");
+    if (latestAskAlphaOrder?.status === "verified") {
+      router.push("/ask-alpha/dashboard");
+      return;
+    }
+
+    if (latestPayment || latestAskAlphaOrder) {
+      router.push("/signup/success");
       return;
     }
 
@@ -133,18 +133,18 @@ export function Header() {
     setIsProfileOpen(false);
     setIsOpen(false);
 
-    if (
-      latestPayment?.status === "pending_verification" ||
-      latestPayment?.status === "rejected" ||
-      latestAskAlphaOrder?.status === "pending_verification" ||
-      latestAskAlphaOrder?.status === "rejected"
-    ) {
-      router.push("/signup/success");
+    if (latestPayment?.status === "verified") {
+      router.push("/dashboard");
       return;
     }
 
-    if (latestPayment?.status === "verified" || askAlphaAccess) {
-      router.push("/dashboard");
+    if (askAlphaAccess) {
+      router.push("/ask-alpha/dashboard");
+      return;
+    }
+
+    if (latestPayment || latestAskAlphaOrder) {
+      router.push("/signup/success");
       return;
     }
 
@@ -202,6 +202,14 @@ export function Header() {
                       <LayoutDashboard size={17} />
                       {isCheckingDashboard ? "Checking..." : "Go to Dashboard"}
                     </button>
+                    <Link
+                      href="/ask-alpha/dashboard"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-black text-gray-700 transition-colors hover:bg-gray-50 hover:text-[#FF0000]"
+                    >
+                      <MessageCircle size={17} />
+                      Ask Alpha Dashboard
+                    </Link>
                     <button
                       type="button"
                       onClick={signOut}
@@ -264,6 +272,14 @@ export function Header() {
                   <LayoutDashboard size={18} />
                   {isCheckingDashboard ? "Checking..." : "Go to Dashboard"}
                 </button>
+                <Link
+                  href="/ask-alpha/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className="flex items-center gap-3 rounded-2xl bg-white/10 px-4 py-3 text-left font-black text-white transition-colors hover:bg-white/15"
+                >
+                  <MessageCircle size={18} />
+                  Ask Alpha Dashboard
+                </Link>
                 <button
                   type="button"
                   onClick={signOut}

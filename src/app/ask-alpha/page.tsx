@@ -269,7 +269,7 @@ export default function AskAlphaPage() {
           </p>
         </motion.div>
 
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <div>
           <section className="space-y-6">
             <div className="grid gap-4 md:grid-cols-2">
               {ASK_ALPHA_OFFERS.map((offer) => {
@@ -307,6 +307,17 @@ export default function AskAlphaPage() {
               })}
             </div>
 
+            <div className="flex justify-end">
+              <Button
+                type="button"
+                size="lg"
+                onClick={() => router.push(`/ask-alpha/account?offer=${encodeURIComponent(selectedOffer.id)}`)}
+                className="h-14 rounded-full bg-gray-900 px-8 text-white hover:bg-[#FF0000]"
+              >
+                Continue with {selectedOffer.title}
+              </Button>
+            </div>
+
             <div className="rounded-3xl border border-[#FF0000]/15 bg-[#FF0000]/5 p-5 sm:p-6">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                 <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white text-[#FF0000]">
@@ -322,7 +333,7 @@ export default function AskAlphaPage() {
             </div>
           </section>
 
-          <aside className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm sm:p-6">
+          <aside className="hidden" aria-hidden="true">
             {isLoading ? (
               <div className="py-12 text-center text-sm font-black uppercase tracking-[0.18em] text-gray-400">Loading</div>
             ) : userId ? (
@@ -554,10 +565,10 @@ export default function AskAlphaPage() {
               </div>
             </div>
             <Link
-              href="/dashboard"
+              href="/ask-alpha/dashboard"
               className="inline-flex h-12 items-center justify-center rounded-full bg-white px-6 text-sm font-black uppercase tracking-[0.08em] text-gray-900 transition-colors hover:bg-[#FF0000] hover:text-white"
             >
-              Open Dashboard
+              Open Q&amp;A Dashboard
             </Link>
           </div>
         </section>

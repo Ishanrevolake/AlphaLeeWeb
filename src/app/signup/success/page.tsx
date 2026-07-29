@@ -159,6 +159,8 @@ export default function SuccessPage() {
   const pageStatus = statusItems.length ? getPageStatus(statusItems) : "pending_verification";
   const content = statusContent[pageStatus];
   const hasVerifiedStatus = statusItems.some((item) => item.status === "verified");
+  const dashboardHref = payment?.status === "verified" ? "/dashboard" : "/ask-alpha/dashboard";
+  const dashboardLabel = payment?.status === "verified" ? "Open dashboard" : "Open Q&A dashboard";
 
   return (
     <div className="min-h-screen bg-white px-4 py-10 sm:px-6 sm:py-12">
@@ -206,10 +208,10 @@ export default function SuccessPage() {
         <div className="mb-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
           {hasVerifiedStatus && (
             <Link
-              href="/dashboard"
+              href={dashboardHref}
               className="inline-flex h-14 w-full items-center justify-center gap-2 rounded-2xl bg-gray-900 px-7 text-base font-black text-white shadow-xl shadow-gray-900/10 transition-colors hover:bg-[#FF0000] sm:w-auto"
             >
-              Open dashboard
+              {dashboardLabel}
               <ArrowRight size={18} />
             </Link>
           )}

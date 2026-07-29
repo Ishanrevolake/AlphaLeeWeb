@@ -31,6 +31,7 @@ export async function hasVerifiedPayment(userId: string) {
     .from('payments')
     .select('id')
     .eq('user_id', userId)
+    .not('package_selection_id', 'is', null)
     .eq('status', 'verified')
     .limit(1);
 
@@ -70,6 +71,7 @@ export async function getLatestPayment(userId: string): Promise<LatestPayment | 
     .from('payments')
     .select('id, reference, amount_lkr, status, slip_file_name, submitted_at, verified_at, rejection_reason')
     .eq('user_id', userId)
+    .not('package_selection_id', 'is', null)
     .order('submitted_at', { ascending: false })
     .limit(1)
     .maybeSingle();
