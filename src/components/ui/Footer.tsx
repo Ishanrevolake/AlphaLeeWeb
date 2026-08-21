@@ -77,11 +77,22 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 border-t border-gray-800 pt-8 grid grid-cols-1 md:grid-cols-3 items-center gap-4">
         <p className="text-sm text-gray-500 font-medium tracking-wide text-center md:text-left">
           (c) {new Date().getFullYear()} Alpha Lee Fitness. All Rights Reserved.
         </p>
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
+        <p className="text-sm text-gray-500 font-medium tracking-wide text-center">
+          Designed &amp; Developed by{" "}
+          <a
+            href="https://www.dellodigital.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-gray-300 hover:text-[#FF0000] transition-colors"
+          >
+            DELLO&apos;S DIGITAL COPYWRITING LTD
+          </a>
+        </p>
+        <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
           <Link href="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
           <Link href="/terms-and-conditions" className="hover:text-white transition-colors">Terms of Service</Link>
         </div>
