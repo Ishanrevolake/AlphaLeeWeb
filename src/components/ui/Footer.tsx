@@ -89,7 +89,7 @@ export function Footer() {
             rel="noopener noreferrer"
             className="text-gray-300 hover:text-[#FF0000] transition-colors"
           >
-            DELLO&apos;S DIGITAL COPYWRITING LTD
+            Dello Digital
           </a>
         </p>
         <div className="flex flex-wrap justify-center md:justify-end gap-x-6 gap-y-2 text-sm text-gray-500 font-medium">
