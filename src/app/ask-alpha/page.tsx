@@ -13,6 +13,8 @@ import { supabase } from "@/lib/supabase";
 import { PACKAGES } from "@/lib/packages";
 import { useFunnelStore } from "@/store/funnelStore";
 
+const Q_AND_A_SERVICE_PACKAGE_IDS = new Set(["consult-inperson", "consult-online", "programme-review"]);
+
 const SERVICE_SECTIONS = [
   { eyebrow: "Consultations", title: "One-On-One Fitness Consultations", description: "Need personalised guidance or want to discuss multiple aspects of your fitness journey? A consultation gives you dedicated time to discuss your goals, challenges, and questions while receiving recommendations specific to your situation. Choose between online or in-person support.", packageIds: ["consult-inperson", "consult-online"] },
   { eyebrow: "Training Programme Review", title: "Get Your Training Programme Professionally Assessed", description: "Already have a workout programme but want to know if it is structured correctly? Receive feedback on your current programme with recommendations to help improve your results.", packageIds: ["programme-review"] },
@@ -246,6 +248,11 @@ export default function AskAlphaPage() {
   };
 
   const startServiceSignup = async (packageId: string) => {
+    if (Q_AND_A_SERVICE_PACKAGE_IDS.has(packageId)) {
+      router.push(`/ask-alpha/account?offer=${encodeURIComponent(packageId)}`);
+      return;
+    }
+
     setPackage(packageId);
     const { data } = await supabase.auth.getSession();
     router.push(data.session ? "/signup/step-2" : "/signup/step-1");

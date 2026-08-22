@@ -164,7 +164,12 @@ function AskAlphaAccountStep() {
         if (!syncedPayment) throw paymentError;
       }
 
-      const { data: mainPayments } = await supabase.from("payments").select("id").eq("user_id", userId).limit(1);
+      const { data: mainPayments } = await supabase
+        .from("payments")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("service_type", "programme")
+        .limit(1);
       await supabase
         .from("profiles")
         .update({ client_type: mainPayments?.length ? "both" : "ask_alpha" })
@@ -202,7 +207,7 @@ function AskAlphaAccountStep() {
               <div className="mb-6">
                 <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#FF0000]/10 text-[#FF0000]"><Lock size={22} /></div>
                 <h1 className="font-outfit text-3xl font-black tracking-tight text-gray-900">{authMode === "signup" ? "Create your Q&A account" : "Log in to continue"}</h1>
-                <p className="mt-2 text-sm font-semibold text-gray-500">Create or access your client account before submitting payment.</p>
+                <p className="mt-2 text-sm font-semibold text-gray-500">Create or access your Q&amp;A account before submitting payment.</p>
               </div>
               <div className="mb-5 grid grid-cols-2 rounded-full bg-[#F9F8F4] p-1">
                 {(["signup", "login"] as const).map((mode) => (

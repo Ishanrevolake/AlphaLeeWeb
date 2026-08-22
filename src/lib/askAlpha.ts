@@ -41,8 +41,41 @@ export const ASK_ALPHA_OFFERS: AskAlphaOffer[] = [
   },
 ];
 
+export const ASK_ALPHA_SERVICE_OFFERS: AskAlphaOffer[] = [
+  {
+    id: "consult-inperson",
+    title: "In-Person Consultation",
+    subtitle: "Face-To-Face Fitness Guidance",
+    description: "A personalised consultation for direct fitness guidance and recommendations.",
+    priceLkr: 15000,
+    questionCredits: 1,
+    responseWindowHours: 72,
+    features: ["One-on-one consultation", "Personalised recommendations", "Training and nutrition guidance"],
+  },
+  {
+    id: "consult-online",
+    title: "Online Consultation",
+    subtitle: "Expert Guidance From Anywhere",
+    description: "A convenient online consultation for personalised fitness guidance.",
+    priceLkr: 10500,
+    questionCredits: 1,
+    responseWindowHours: 72,
+    features: ["One-on-one online consultation", "Personalised recommendations", "Actionable next steps"],
+  },
+  {
+    id: "programme-review",
+    title: "Training Programme Review",
+    subtitle: "Programme Assessment",
+    description: "Expert feedback and recommendations for your current workout programme.",
+    priceLkr: 5500,
+    questionCredits: 1,
+    responseWindowHours: 72,
+    features: ["Programme structure analysis", "Training volume assessment", "Progression recommendations"],
+  },
+];
+
 export function getAskAlphaOfferById(offerId: string | null) {
-  return ASK_ALPHA_OFFERS.find((offer) => offer.id === offerId) ?? null;
+  return [...ASK_ALPHA_OFFERS, ...ASK_ALPHA_SERVICE_OFFERS].find((offer) => offer.id === offerId) ?? null;
 }
 
 export function formatAskAlphaPrice(amount: number) {
