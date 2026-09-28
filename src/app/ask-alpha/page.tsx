@@ -12,6 +12,7 @@ import { getLatestAskAlphaOrder, type LatestAskAlphaOrder, type PaymentStatus } 
 import { supabase } from "@/lib/supabase";
 import { PACKAGES } from "@/lib/packages";
 import { useFunnelStore } from "@/store/funnelStore";
+import { choosePackage } from "@/lib/onboardingDraft";
 
 const Q_AND_A_SERVICE_PACKAGE_IDS = new Set(["consult-inperson", "consult-online", "programme-review"]);
 
@@ -253,9 +254,11 @@ export default function AskAlphaPage() {
       return;
     }
 
-    setPackage(packageId);
-    const { data } = await supabase.auth.getSession();
-    router.push(data.session ? "/signup/step-2" : "/signup/step-1");
+    try {
+      router.push(await choosePackage(packageId));
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Unable to save your package. Please retry.');
+    }
   };
 
   return (

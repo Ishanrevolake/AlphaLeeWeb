@@ -12,6 +12,8 @@ import { Input } from '@/components/ui/Input';
 import { supabase } from '@/lib/supabase';
 import { getLatestPayment } from '@/lib/clientAccess';
 import { getPackageById } from '@/lib/packages';
+import { restoreDraft, saveDraft } from '@/lib/onboardingDraft';
+import { useDraftAutosave } from '@/lib/useDraftAutosave';
 
 const requiredString = (message: string) =>
   z.string({ error: message }).trim().min(1, message);
@@ -69,8 +71,10 @@ export default function Step2Page() {
   const [mounted, setMounted] = React.useState(false);
   const [isCheckingAccess, setIsCheckingAccess] = React.useState(true);
   const [packageMessage, setPackageMessage] = React.useState('');
+  const [isSaving, setIsSaving] = React.useState(false);
+  const saveMessage = useDraftAutosave(mounted && !isCheckingAccess);
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
+  const { register, handleSubmit, reset, watch, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       age: store.age || '',
@@ -106,6 +110,15 @@ export default function Step2Page() {
         return;
       }
 
+      restoreDraft(user);
+      const store = useFunnelStore.getState();
+      if (!store.selectedPackage) {
+        router.replace('/packages');
+        return;
+      }
+      reset(store);
+      store.setDetails({ intakeComplete: false });
+
       if (!store.firstName || !store.email) {
         const metadata = user.user_metadata || {};
         const firstName = String(metadata.first_name || '');
@@ -128,7 +141,7 @@ export default function Step2Page() {
         .limit(1)
         .maybeSingle();
 
-      if (latestOnboarding) {
+      if (latestOnboarding && !store.draftUpdatedAt) {
         reset({
           age: latestOnboarding.age ? String(latestOnboarding.age) : store.age,
           gender: latestOnboarding.gender || store.gender,
@@ -151,17 +164,33 @@ export default function Step2Page() {
     };
 
     prepareForm();
-  }, [router, reset, store]);
+  }, [router, reset]);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const subscription = watch((values) => {
+      useFunnelStore.getState().setDetails({ ...values, intakeComplete: false });
+    });
+    return () => subscription.unsubscribe();
+  }, [mounted, watch]);
 
   if (!mounted || isCheckingAccess) return null;
 
-  const onSubmit = (data: FormValues) => {
-    store.setDetails(data);
+  const onSubmit = async (data: FormValues) => {
+    store.setDetails({ ...data, intakeComplete: true });
     if (!store.selectedPackage) {
       setPackageMessage('Please choose a package first so we can calculate your payment details.');
       return;
     }
-    router.push('/signup/step-3');
+    setIsSaving(true);
+    try {
+      await saveDraft();
+      router.push('/signup/step-3');
+    } catch (error) {
+      setPackageMessage(error instanceof Error ? error.message : 'Unable to save progress. Please retry.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const selectedPackage = getPackageById(store.selectedPackage);
@@ -178,6 +207,7 @@ export default function Step2Page() {
           <div className="text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000] mb-3">Client intake</div>
           <h1 className="text-3xl sm:text-4xl font-black mb-2 font-outfit text-gray-900 tracking-tight">Tell Us About You</h1>
           <p className="text-gray-600 font-medium">This helps us build your personalised plan from day one.</p>
+          <p role="status" className="mt-3 text-sm text-gray-500">{saveMessage}</p>
         </div>
 
         <div className="mb-6 rounded-3xl border border-gray-100 bg-[#F9F8F4] p-5 sm:p-6">
@@ -289,10 +319,10 @@ export default function Step2Page() {
 
       <div className="fixed bottom-0 left-0 w-full bg-[#F9F8F4]/90 backdrop-blur-md border-t border-gray-200 shadow-[0_-4px_24px_rgba(0,0,0,0.06)] z-[90]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center justify-center gap-3 sm:gap-4">
-          <Button type="button" variant="secondary" onClick={() => router.push('/signup/step-1')} className="flex-1 max-w-[200px] h-14 font-bold text-[15px] bg-white hover:bg-gray-50 text-gray-700 border border-gray-200">
+          <Button type="button" variant="secondary" onClick={() => router.push('/packages')} className="flex-1 max-w-[200px] h-14 font-bold text-[15px] bg-white hover:bg-gray-50 text-gray-700 border border-gray-200">
             Back
           </Button>
-          <Button type="submit" form="step2-form" size="lg" className="flex-1 max-w-[220px] h-14 font-bold text-[15px] bg-gray-900 hover:bg-gray-800 text-white shadow-xl shadow-gray-900/10">
+          <Button type="submit" form="step2-form" size="lg" isLoading={isSaving} className="flex-1 max-w-[220px] h-14 font-bold text-[15px] bg-gray-900 hover:bg-gray-800 text-white shadow-xl shadow-gray-900/10">
             Continue
           </Button>
         </div>

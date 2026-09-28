@@ -48,11 +48,15 @@ function AskAlphaAccountStep() {
   const [copied, setCopied] = useState("");
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
+    supabase.auth.getUser().then(async ({ data }) => {
       setUserId(data.user?.id || null);
+      if (data.user && (data.user.user_metadata.onboarding_offer !== offer.id || data.user.user_metadata.onboarding_flow !== 'ask_alpha')) {
+        const { error } = await supabase.auth.updateUser({ data: { onboarding_offer: offer.id, onboarding_flow: "ask_alpha" } });
+        if (error) setMessage('Unable to save your selected offer. Please reload to retry.');
+      }
       setIsChecking(false);
     });
-  }, []);
+  }, [offer.id]);
 
   const handleAuth = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -66,6 +70,8 @@ function AskAlphaAccountStep() {
       if (authMode === "login") {
         const { data, error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
+        const { error: saveError } = await supabase.auth.updateUser({ data: { onboarding_offer: offer.id, onboarding_flow: "ask_alpha" } });
+        if (saveError) throw saveError;
         setUserId(data.user.id);
         return;
       }
@@ -78,7 +84,7 @@ function AskAlphaAccountStep() {
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}`, phone } },
+        options: { data: { first_name: firstName, last_name: lastName, full_name: `${firstName} ${lastName}`, phone, onboarding_offer: offer.id, onboarding_flow: "ask_alpha" } },
       });
       if (error) throw error;
       if (!data.session) {

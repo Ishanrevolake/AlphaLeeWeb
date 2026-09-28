@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { supabase } from "@/lib/supabase";
 import { getLatestAskAlphaOrder, getLatestPayment, hasVerifiedAskAlphaOrder } from "@/lib/clientAccess";
+import { resumeSignup } from "@/lib/onboardingDraft";
 
 export function Header() {
   const pathname = usePathname();
@@ -106,7 +107,7 @@ export function Header() {
       return;
     }
 
-    router.push("/packages");
+    router.push(await resumeSignup(data.user));
   };
 
   const signOut = async () => {
@@ -148,7 +149,8 @@ export function Header() {
       return;
     }
 
-    setIsPendingModalOpen(true);
+    const { data } = await supabase.auth.getUser();
+    if (data.user) router.push(await resumeSignup(data.user));
   };
 
   return (

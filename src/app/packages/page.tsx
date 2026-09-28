@@ -7,7 +7,7 @@ import { Check, X } from 'lucide-react';
 import { useFunnelStore } from '@/store/funnelStore';
 import { PlanCard } from '@/components/ui/PlanCard';
 import { PACKAGES, PACKAGE_CATEGORIES, type PackageCategory } from '@/lib/packages';
-import { supabase } from '@/lib/supabase';
+import { choosePackage } from '@/lib/onboardingDraft';
 
 const SERVICE_IDS = new Set([
   'consult-inperson',
@@ -33,9 +33,11 @@ export default function PackagesPage() {
   const filteredPackages = categoryPackages.filter((pkg) => !SERVICE_IDS.has(pkg.id));
 
   const startSignupForPackage = async (packageId: string) => {
-    setPackage(packageId);
-    const { data } = await supabase.auth.getSession();
-    router.push(data.session ? '/signup/step-2' : '/signup/step-1');
+    try {
+      router.push(await choosePackage(packageId));
+    } catch (error) {
+      window.alert(error instanceof Error ? error.message : 'Unable to save your package. Please retry.');
+    }
   };
 
   return (

@@ -2,6 +2,14 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 ## Getting Started
 
+### Resuming client signup
+
+After account creation, programme signup saves an account-linked draft in Supabase user metadata (`onboarding_draft`) and a browser copy scoped to the user ID. Intake edits sync after a short pause; Continue waits for a successful sync. Login restores the newer draft and routes to package selection, intake, or payment. Ask Alpha stores its selected offer for resuming checkout. No database migration is required.
+
+Drafts do not create onboarding submissions, package selections, or payments, and never grant dashboard access. Submitted payments still go through the existing verification flow. Unsubmitted payment files must be selected again. If account sync fails, the form reports the error and retains the browser draft; only successfully synced changes are available on another device.
+
+Run the isolated draft/auth regression checks with `node --test tests/onboarding-draft.test.cjs`. They do not write to Supabase.
+
 First, run the development server:
 
 ```bash

@@ -8,6 +8,7 @@ import { Camera, Check, Download, Dumbbell, ImagePlus, LogOut, MessageCircle, Pl
 import { Button } from "@/components/ui/Button";
 import { supabase } from "@/lib/supabase";
 import { hasVerifiedPayment } from "@/lib/clientAccess";
+import { resumeSignup } from "@/lib/onboardingDraft";
 
 type Profile = {
   full_name: string | null;
@@ -156,7 +157,7 @@ export default function DashboardPage() {
     const programmeAccess = await hasVerifiedPayment(user.id);
 
     if (!programmeAccess) {
-      router.replace("/packages");
+      router.replace(await resumeSignup(user));
       return;
     }
 

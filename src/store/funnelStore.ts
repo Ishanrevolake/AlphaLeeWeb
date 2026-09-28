@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-interface FunnelData {
+export interface FunnelData {
+  ownerId: string | null;
+  draftUpdatedAt: number;
+  intakeComplete: boolean;
   firstName: string;
   lastName: string;
   name: string;
@@ -35,7 +38,10 @@ interface FunnelState extends FunnelData {
   clearFunnel: () => void;
 }
 
-const initialState: FunnelData = {
+export const initialState: FunnelData = {
+  ownerId: null,
+  draftUpdatedAt: 0,
+  intakeComplete: false,
   firstName: '',
   lastName: '',
   name: '',
@@ -65,9 +71,9 @@ export const useFunnelStore = create<FunnelState>()(
   persist(
     (set) => ({
       ...initialState,
-      setDetails: (details) => set((state) => ({ ...state, ...details })),
-      setPackage: (pkg) => set({ selectedPackage: pkg }),
-      setReplyGuaranteeAddon: (enabled) => set({ replyGuaranteeAddon: enabled }),
+      setDetails: (details) => set((state) => ({ ...state, ...details, draftUpdatedAt: Date.now() })),
+      setPackage: (pkg) => set({ selectedPackage: pkg, draftUpdatedAt: Date.now() }),
+      setReplyGuaranteeAddon: (enabled) => set({ replyGuaranteeAddon: enabled, draftUpdatedAt: Date.now() }),
       createPaymentReference: () => {
         const reference = `ALF-${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
         set({ paymentReference: reference });

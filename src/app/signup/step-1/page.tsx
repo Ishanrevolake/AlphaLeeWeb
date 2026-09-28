@@ -7,11 +7,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Eye, EyeOff, Lock, X } from 'lucide-react';
-import { useFunnelStore } from '@/store/funnelStore';
+import { initialState, useFunnelStore } from '@/store/funnelStore';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { supabase } from '@/lib/supabase';
-import { getLatestPayment } from '@/lib/clientAccess';
+import { resumeSignup, restoreDraft, saveDraft } from '@/lib/onboardingDraft';
 
 const formSchema = z.object({
   firstName: z.string().min(2, "First name is required"),
@@ -42,16 +42,21 @@ export default function Step1Page() {
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      firstName: store.firstName || '',
-      lastName: store.lastName || '',
-      email: store.email || '',
-      phone: store.phone || '',
+      firstName: '',
+      lastName: '',
+      email: '',
+      phone: '',
       password: '',
       confirmPassword: '',
     }
   });
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    void supabase.auth.getUser().then(async ({ data }) => {
+      if (data.user) router.replace(await resumeSignup(data.user));
+      else setMounted(true);
+    });
+  }, [router]);
   if (!mounted) return null;
 
   const onSubmit = async (data: FormValues) => {
@@ -68,6 +73,7 @@ export default function Step1Page() {
           last_name: data.lastName,
           full_name: `${data.firstName} ${data.lastName}`,
           phone: data.phone,
+          onboarding_draft: { ...initialState, selectedPackage: store.selectedPackage, draftUpdatedAt: Date.now() },
         },
       },
     });
@@ -81,6 +87,7 @@ export default function Step1Page() {
       return;
     }
 
+    useFunnelStore.setState({ ...initialState, selectedPackage: store.selectedPackage });
     store.setDetails({
       firstName: data.firstName,
       lastName: data.lastName,
@@ -90,8 +97,14 @@ export default function Step1Page() {
     });
     setAccountEmail(data.email);
 
-    if (authData.session) {
-      router.push('/signup/step-2');
+    if (authData.session && authData.user) {
+      restoreDraft(authData.user);
+      try {
+        await saveDraft();
+      } catch (error) {
+        setAuthMessage(error instanceof Error ? error.message : 'Unable to save progress.');
+      }
+      router.push(store.selectedPackage ? '/signup/step-2' : '/packages');
       return;
     }
 
@@ -125,10 +138,10 @@ export default function Step1Page() {
       return;
     }
 
-    const latestPayment = signInData.user?.id ? await getLatestPayment(signInData.user.id) : null;
+    const nextRoute = await resumeSignup(signInData.user);
     setIsSubmitting(false);
     setIsLoginOpen(false);
-    router.push(latestPayment ? '/signup/success' : store.selectedPackage ? '/signup/step-2' : '/packages');
+    router.push(nextRoute);
   };
 
   return (

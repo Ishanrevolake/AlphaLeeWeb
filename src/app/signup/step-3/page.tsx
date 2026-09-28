@@ -16,6 +16,8 @@ import {
 } from '@/lib/packages';
 import { supabase } from '@/lib/supabase';
 import { getLatestPayment } from '@/lib/clientAccess';
+import { draftRoute, restoreDraft } from '@/lib/onboardingDraft';
+import { useDraftAutosave } from '@/lib/useDraftAutosave';
 
 const BANK_DETAILS = [
   { label: 'Account Name', value: 'Alpha Lee Fitness' },
@@ -49,20 +51,30 @@ export default function Step3Page() {
   const replyGuaranteeSelected = Boolean(replyGuaranteeEligible && store.replyGuaranteeAddon);
   const total = getPackageTotalPrice(store.selectedPackage, replyGuaranteeSelected);
   const replyGuaranteePrice = formatLkrPrice(REPLY_GUARANTEE_ADDON_PRICE);
-  const [slipName, setSlipName] = useState(store.paymentSlipName || '');
+  const [slipName, setSlipName] = useState('');
   const [slipFile, setSlipFile] = useState<File | null>(null);
   const [error, setError] = useState('');
   const [copied, setCopied] = useState('');
   const [showPackageSelector, setShowPackageSelector] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [mounted, setMounted] = React.useState(false);
+  const saveMessage = useDraftAutosave(mounted);
 
   useEffect(() => {
-    setMounted(true);
-    if (!store.paymentReference) {
-      store.createPaymentReference();
-    }
-  }, [store]);
+    const prepare = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (!data.user) { router.replace('/signup/step-1'); return; }
+      const payment = await getLatestPayment(data.user.id);
+      if (payment) { router.replace('/signup/success'); return; }
+      restoreDraft(data.user);
+      const next = draftRoute();
+      if (next !== '/signup/step-3') { router.replace(next); return; }
+      const draft = useFunnelStore.getState();
+      if (!draft.paymentReference) draft.createPaymentReference();
+      setMounted(true);
+    };
+    void prepare();
+  }, [router]);
 
   useEffect(() => {
     if (selectedPackage?.category === 'One-Off' && store.replyGuaranteeAddon) {
@@ -74,15 +86,7 @@ export default function Step3Page() {
 
   if (!mounted) return null;
 
-  if (!selectedPackage || !store.firstName) {
-    router.push('/signup/step-1');
-    return null;
-  }
-
-  if (!store.primaryGoal) {
-    router.push('/signup/step-2');
-    return null;
-  }
+  if (!selectedPackage) return null;
 
   const copyValue = async (value: string, label: string) => {
     try {
@@ -289,6 +293,7 @@ export default function Step3Page() {
         <div className="text-center mb-8">
           <div className="text-[12px] font-black uppercase tracking-[0.2em] text-[#FF0000] mb-3">Payment</div>
           <h1 className="text-3xl sm:text-4xl font-black mb-3 font-outfit text-gray-900 tracking-tight">Secure Your Spot</h1>
+          <p role="status" className="mb-3 text-sm text-gray-500">{saveMessage || 'Your signup details are saved. If you return later, select your payment slip again before submitting.'}</p>
           <p className="text-gray-600 font-medium">
             You&apos;ve selected <span className="font-bold text-[#FF0000]">{selectedPackage.title}</span>.
           </p>
