@@ -1,4 +1,5 @@
 "use client";
+import { MessageBody, ClientDailyActivity } from "@/components/ClientActivity";
 
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
@@ -382,6 +383,7 @@ export default function CoachAskAlphaPage() {
                   </div>
                 </div>
 
+                <ClientDailyActivity clientId={thread.user_id} />
                 <div className="space-y-3 rounded-3xl bg-[#F9F8F4] p-4">
                   {thread.messages.map((item) => {
                     const isStaff = item.sender_role === "trainer";
@@ -394,7 +396,7 @@ export default function CoachAskAlphaPage() {
                           <div className={`mb-2 text-[11px] font-black uppercase tracking-[0.12em] ${isStaff ? "text-white/50" : "text-[#FF0000]"}`}>
                             {isStaff ? "Trainer" : thread.profile?.full_name || "Client"}
                           </div>
-                          <p className="whitespace-pre-wrap">{item.body}</p>
+                          <MessageBody body={item.body} />
                           <div className={`mt-2 text-[11px] font-bold ${isStaff ? "text-white/45" : "text-gray-400"}`}>
                             {new Date(item.created_at).toLocaleString()}
                           </div>
